@@ -27,8 +27,8 @@ typedef struct {
 
 int main(void)
 {
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    int screenWidth = 800;
+    int screenHeight = 450;
     GameState currentScreen = STATE_MENU;
     int menuSelection = 1;
 
@@ -37,7 +37,7 @@ int main(void)
     Brick bricks[5][10];
     for (int i = 0; i < 5; i++) {
         for (int j = 0; j < 10; j++) {
-            bricks[i][j].rect = (Rectangle){ j * 80 + 5, i * 30 + 50, 70, 20 };
+            bricks[i][j].rect = (Rectangle){ j * (screenWidth / 10.0f) + screenWidth * 0.006f, i * (screenHeight / 15.0f) + screenHeight * 0.11f, screenWidth / 11.4f, screenHeight / 22.5f };
             bricks[i][j].active = true;
             bricks[i][j].color = BLACK;
         }
@@ -51,16 +51,27 @@ int main(void)
     while (!WindowShouldClose())
     {
         SetExitKey(KEY_NULL);
+
+        // F11 ile tam ekran geçişi
+        if (IsKeyPressed(KEY_F11)) {
+            ToggleFullscreen();
+        }
+
+        // Her karede ekran boyutunu güncelle
+        screenWidth = GetScreenWidth();
+        screenHeight = GetScreenHeight();
+
         BeginDrawing();
 
             switch (currentScreen)
             {
             case STATE_MENU:
                 ClearBackground(RAYWHITE);
-                player1.rect = (Rectangle){ screenWidth / 2 - 40, screenHeight / 2 + 150, 80, 20 };
-                ball.position = (Vector2){ screenWidth / 2, screenHeight / 2 + 135 };
+                player1.rect = (Rectangle){ screenWidth / 2 - screenWidth * 0.05f, screenHeight / 2 + screenHeight * 0.33f, screenWidth * 0.1f, screenHeight * 0.044f };
+                ball.position = (Vector2){ screenWidth / 2, screenHeight / 2 + screenHeight * 0.3f };
                 for (int i = 0; i < 5; i++) {
                     for (int j = 0; j < 10; j++) {
+                        bricks[i][j].rect = (Rectangle){ j * (screenWidth / 10.0f) + screenWidth * 0.006f, i * (screenHeight / 15.0f) + screenHeight * 0.11f, screenWidth / 11.4f, screenHeight / 22.5f };
                         bricks[i][j].active = true;
                     }
                 }
@@ -81,10 +92,12 @@ int main(void)
                 ClearBackground(RED);
                 
                 if (IsKeyDown(KEY_RIGHT) && player1.rect.x < screenWidth - player1.rect.width) {
-                    player1.rect.x += player1.speed * GetFrameTime();}
+                    player1.rect.x += player1.speed * GetFrameTime();
+                }
                 if (IsKeyDown(KEY_LEFT) && player1.rect.x > 0) {
-                    player1.rect.x -= player1.speed * GetFrameTime();}
-                
+                    player1.rect.x -= player1.speed * GetFrameTime();
+                }
+
                 DrawRectangleRec(player1.rect, player1.color);
                 for (int i = 0; i < 5; i++) {
                     for (int j = 0; j < 10; j++) {
@@ -98,7 +111,7 @@ int main(void)
                 ball.position.y += ball.speed.y * GetFrameTime();
 
                 // Sağ ve Sol Duvar Çarpışması
-                if (ball.position.x >= (GetScreenWidth() - ball.radius) || ball.position.x <= ball.radius) {
+                if (ball.position.x >= (screenWidth - ball.radius) || ball.position.x <= ball.radius) {
                     ball.speed.x *= -1; // X yönünü tersine çevir
                 }
 
@@ -108,14 +121,14 @@ int main(void)
                 }
 
                 // Alt Duvar (Şimdilik test için sekecek şekilde ayarlayalım, normalde burada can kaybedilir)
-                if (ball.position.y >= (GetScreenHeight() - ball.radius)) {
+                if (ball.position.y >= (screenHeight - ball.radius)) {
                     ball.speed.y *= -1; 
                 }
                 if (CheckCollisionCircleRec(ball.position, ball.radius, player1.rect)) {
                     ball.speed.y *= -1;     // Topu yukarı sektir
     
-                // Topun platformun içine girmesini (glitch) engellemek için 
-                // topu platformun hemen üstüne iteriz:
+                    // Topun platformun içine girmesini (glitch) engellemek için 
+                    // topu platformun hemen üstüne iteriz:
                     ball.position.y = player1.rect.y - ball.radius; 
                 }
                 for (int i = 0; i < 5; i++) {
@@ -131,13 +144,14 @@ int main(void)
             }
             
 
+
             if (currentScreen == STATE_MENU) {
-                DrawText("PONG BREAKER ROYALE OYNA", 200, 200, 20, BLACK);
+                DrawText("PONG BREAKER ROYALE OYNA", screenWidth * 0.25f, screenHeight * 0.44f, screenHeight * 0.044f, BLACK);
 
                 // Menü yazıları için Rectangle tanımları
-                Rectangle playRect = { screenWidth / 2 - 50, 250, 120, 25 };
-                Rectangle scoreRect = { screenWidth / 2 - 50, 300, 120, 25 };
-                Rectangle exitRect = { screenWidth / 2 - 50, 350, 120, 25 };
+                Rectangle playRect = { screenWidth / 2 - screenWidth * 0.062f, screenHeight * 0.56f, screenWidth * 0.15f, screenHeight * 0.055f };
+                Rectangle scoreRect = { screenWidth / 2 - screenWidth * 0.062f, screenHeight * 0.67f, screenWidth * 0.15f, screenHeight * 0.055f };
+                Rectangle exitRect = { screenWidth / 2 - screenWidth * 0.062f, screenHeight * 0.78f, screenWidth * 0.15f, screenHeight * 0.055f };
 
                 Vector2 mousePos = GetMousePosition();
                 int hovered = 0;
@@ -153,9 +167,9 @@ int main(void)
                 if (hovered) menuSelection = hovered;
 
                 // Yazıları çiz
-                DrawText("Oyna", screenWidth / 2 - 50, 250, 20, (menuSelection == 1) ? RED : BLACK);
-                DrawText("Skorlar", screenWidth / 2 - 50, 300, 20, (menuSelection == 2) ? RED : BLACK);
-                DrawText("Cikis", screenWidth / 2 - 50, 350, 20, (menuSelection == 3) ? RED : BLACK);
+                DrawText("Oyna", playRect.x, playRect.y, screenHeight * 0.044f, (menuSelection == 1) ? RED : BLACK);
+                DrawText("Skorlar", scoreRect.x, scoreRect.y, screenHeight * 0.044f, (menuSelection == 2) ? RED : BLACK);
+                DrawText("Cikis", exitRect.x, exitRect.y, screenHeight * 0.044f, (menuSelection == 3) ? RED : BLACK);
 
                 // Mouse ile tıklama
                 if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
