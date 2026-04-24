@@ -32,12 +32,28 @@ int main(void)
     GameState currentScreen = STATE_MENU;
     int menuSelection = 1;
 
-    Ball ball = { {screenWidth / 2, screenHeight / 2 + 135}, {300.0f, -300.0f}, 10.0f, WHITE };
-    Paddle player1 = { {screenWidth / 2 - 40, screenHeight / 2 + 150, 80, 20}, 500.0f, BLACK };
+    float baseScreenWidth = 800.0f;
+    float baseScreenHeight = 450.0f;
+    float baseBallRadius = 10.0f;
+    float baseBallSpeed = 300.0f;
+    float basePaddleWidth = 80.0f;
+    float basePaddleHeight = 20.0f;
+    float basePaddleSpeed = 500.0f;
+
+    float scaleX = screenWidth / baseScreenWidth;
+    float scaleY = screenHeight / baseScreenHeight;
+
+    Ball ball = { {screenWidth / 2, screenHeight / 2 + 135 * scaleY}, {baseBallSpeed * scaleX, -baseBallSpeed * scaleY}, baseBallRadius * ((scaleX + scaleY) / 2.0f), WHITE };
+    Paddle player1 = { {screenWidth / 2 - (basePaddleWidth/2) * scaleX, screenHeight / 2 + 150 * scaleY, basePaddleWidth * scaleX, basePaddleHeight * scaleY}, basePaddleSpeed * scaleX, BLACK };
     Brick bricks[5][10];
     for (int i = 0; i < 5; i++) {
         for (int j = 0; j < 10; j++) {
-            bricks[i][j].rect = (Rectangle){ j * (screenWidth / 10.0f) + screenWidth * 0.006f, i * (screenHeight / 15.0f) + screenHeight * 0.11f, screenWidth / 11.4f, screenHeight / 22.5f };
+            bricks[i][j].rect = (Rectangle){
+                j * (baseScreenWidth / 10.0f) * scaleX + screenWidth * 0.006f,
+                i * (baseScreenHeight / 15.0f) * scaleY + screenHeight * 0.11f,
+                (baseScreenWidth / 11.4f) * scaleX,
+                (baseScreenHeight / 22.5f) * scaleY
+            };
             bricks[i][j].active = true;
             bricks[i][j].color = BLACK;
         }
@@ -58,8 +74,43 @@ int main(void)
         }
 
         // Her karede ekran boyutunu güncelle
+        int prevScreenWidth = screenWidth;
+        int prevScreenHeight = screenHeight;
         screenWidth = GetScreenWidth();
         screenHeight = GetScreenHeight();
+        scaleX = screenWidth / baseScreenWidth;
+        scaleY = screenHeight / baseScreenHeight;
+
+        // Eğer ekran boyutu değiştiyse oyun durumunda nesneleri yeniden ölçekle
+        static int lastScreenWidth = 800, lastScreenHeight = 450;
+        if ((screenWidth != lastScreenWidth || screenHeight != lastScreenHeight) && currentScreen == STATE_GAME) {
+            // Paddle'ı ekranın altına ortala
+            player1.rect.width = basePaddleWidth * scaleX;
+            player1.rect.height = basePaddleHeight * scaleY;
+            player1.rect.x = (player1.rect.x / prevScreenWidth) * screenWidth;
+            player1.rect.y = (player1.rect.y / prevScreenHeight) * screenHeight;
+            player1.speed = basePaddleSpeed * scaleX;
+
+            // Topun pozisyonunu ve hızını orantıla
+            ball.position.x = (ball.position.x / prevScreenWidth) * screenWidth;
+            ball.position.y = (ball.position.y / prevScreenHeight) * screenHeight;
+            ball.radius = baseBallRadius * ((scaleX + scaleY) / 2.0f);
+            ball.speed.x = (ball.speed.x > 0 ? 1 : -1) * baseBallSpeed * scaleX;
+            ball.speed.y = (ball.speed.y > 0 ? 1 : -1) * baseBallSpeed * scaleY;
+
+            // Tuğlaları yeniden ölçekle
+            for (int i = 0; i < 5; i++) {
+                for (int j = 0; j < 10; j++) {
+                    bricks[i][j].rect.x = j * (baseScreenWidth / 10.0f) * scaleX + screenWidth * 0.006f;
+                    bricks[i][j].rect.y = i * (baseScreenHeight / 15.0f) * scaleY + screenHeight * 0.11f;
+                    bricks[i][j].rect.width = (baseScreenWidth / 11.4f) * scaleX;
+                    bricks[i][j].rect.height = (baseScreenHeight / 22.5f) * scaleY;
+                }
+            }
+
+            lastScreenWidth = screenWidth;
+            lastScreenHeight = screenHeight;
+        }
 
         BeginDrawing();
 
@@ -67,11 +118,21 @@ int main(void)
             {
             case STATE_MENU:
                 ClearBackground(RAYWHITE);
-                player1.rect = (Rectangle){ screenWidth / 2 - screenWidth * 0.05f, screenHeight / 2 + screenHeight * 0.33f, screenWidth * 0.1f, screenHeight * 0.044f };
-                ball.position = (Vector2){ screenWidth / 2, screenHeight / 2 + screenHeight * 0.3f };
+                // Menüye dönünce paddle ve topu ortala, tuğlaları resetle
+                player1.rect = (Rectangle){ screenWidth / 2 - (basePaddleWidth/2) * scaleX, screenHeight / 2 + 150 * scaleY, basePaddleWidth * scaleX, basePaddleHeight * scaleY };
+                player1.speed = basePaddleSpeed * scaleX;
+                ball.position = (Vector2){ screenWidth / 2, screenHeight / 2 + 135 * scaleY };
+                ball.radius = baseBallRadius * ((scaleX + scaleY) / 2.0f);
+                ball.speed.x = baseBallSpeed * scaleX;
+                ball.speed.y = -baseBallSpeed * scaleY;
                 for (int i = 0; i < 5; i++) {
                     for (int j = 0; j < 10; j++) {
-                        bricks[i][j].rect = (Rectangle){ j * (screenWidth / 10.0f) + screenWidth * 0.006f, i * (screenHeight / 15.0f) + screenHeight * 0.11f, screenWidth / 11.4f, screenHeight / 22.5f };
+                        bricks[i][j].rect = (Rectangle){
+                            j * (baseScreenWidth / 10.0f) * scaleX + screenWidth * 0.006f,
+                            i * (baseScreenHeight / 15.0f) * scaleY + screenHeight * 0.11f,
+                            (baseScreenWidth / 11.4f) * scaleX,
+                            (baseScreenHeight / 22.5f) * scaleY
+                        };
                         bricks[i][j].active = true;
                     }
                 }
@@ -93,9 +154,11 @@ int main(void)
                 
                 if (IsKeyDown(KEY_RIGHT) && player1.rect.x < screenWidth - player1.rect.width) {
                     player1.rect.x += player1.speed * GetFrameTime();
+                    if (player1.rect.x > screenWidth - player1.rect.width) player1.rect.x = screenWidth - player1.rect.width;
                 }
                 if (IsKeyDown(KEY_LEFT) && player1.rect.x > 0) {
                     player1.rect.x -= player1.speed * GetFrameTime();
+                    if (player1.rect.x < 0) player1.rect.x = 0;
                 }
 
                 DrawRectangleRec(player1.rect, player1.color);
