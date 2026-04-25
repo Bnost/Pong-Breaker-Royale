@@ -49,24 +49,11 @@ int main()
     int ScreenHeight = 450; //Regular screen height
 
     InitWindow(ScreenWidth, ScreenHeight, "Window");  //Set up the window
+
     InitAudioDevice(); // audio initiliazed
-    Sound bam = LoadSound("pop.ogg");
+    Sound bam = LoadSound("Pop.ogg");
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
-
-    // Main game loop
-    while (!WindowShouldClose())    // Detect window close button or ESC key
-    {
-        if (IsKeyPressed(KEY_F11))  //If you press F11 it will cause fullscreen
-        {
-            ToggleFullScreenWindow(ScreenWidth, ScreenHeight);
-        }
-        
-        //Drawing
-        //----------------------------------------------------------------------------------
-        BeginDrawing();
-
-        ClearBackground(BLACK);
 
         DrawText("Press F11 for Fullscreen!", 260, 200, 20, LIGHTGRAY);
 
@@ -84,4 +71,5 @@ int main()
     //--------------------------------------------------------------------------------------
 
     return 0;
+}
 }
