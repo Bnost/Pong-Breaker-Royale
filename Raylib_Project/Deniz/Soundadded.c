@@ -41,7 +41,7 @@ int GetDisplayHeight()  //We are displaying height with this function
         return GetScreenHeight();   //If we are not at fullscreen than get regular screen height
     }
 }
-Sound bam = LoadSound("Pop.ogg");
+
 int main()
 {
     // Initialization
@@ -50,29 +50,39 @@ int main()
     int ScreenHeight = 450; //Regular screen height
 
     InitWindow(ScreenWidth, ScreenHeight, "Window");  //Set up the window
-
     InitAudioDevice(); // audio initiliazed
-
+    Sound bam = LoadSound("Pop.ogg");
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
 
-    DrawText("Press F11 for Fullscreen!", 260, 200, 20, LIGHTGRAY);
+    // Main game loop
+    while (!WindowShouldClose())    // Detect window close button or ESC key
+    {
+        if (IsKeyPressed(KEY_F11))  //If you press F11 it will cause fullscreen
+        {
+            ToggleFullScreenWindow(ScreenWidth, ScreenHeight);
+        }
 
-    EndDrawing();
-    if (IsKeyPressed(KEY_SPACE)) {  // I will make sound appear simultaneously with collsision when we create balls
-        PlaySound(bam);
+        //Drawing
+        //----------------------------------------------------------------------------------
+        BeginDrawing();
+
+        ClearBackground(BLACK);
+
+        DrawText("Press F11 for Fullscreen!", 260, 200, 20, LIGHTGRAY);
+
+        EndDrawing();
+        if (IsKeyPressed(KEY_SPACE)) {  // I will make sound appear simultaneously with collsision when we create balls
+            PlaySound(bam);
+        }
+        //----------------------------------------------------------------------------------
     }
-    //----------------------------------------------------------------------------------
 
-
-// De-Initialization
-//--------------------------------------------------------------------------------------
-
-    UnloadSound(bam);
+    // De-Initialization
+    //--------------------------------------------------------------------------------------
     CloseAudioDevice();
-    CloseWindow();
-    // Close window and OpenGL context
-   //--------------------------------------------------------------------------------------
+        CloseWindow();        // Close window and OpenGL context
+        //--------------------------------------------------------------------------------------
 
-    return 0;
+        return 0;
 }
