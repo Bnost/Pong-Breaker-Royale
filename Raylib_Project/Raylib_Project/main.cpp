@@ -49,7 +49,8 @@ int main()
     int ScreenHeight = 450; //Regular screen height
 
     InitWindow(ScreenWidth, ScreenHeight, "Window");  //Set up the window
-
+    InitAudioDevice(); // audio initiliazed
+    Sound bam = LoadSound("pop.ogg");
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
 
@@ -70,11 +71,15 @@ int main()
         DrawText("Press F11 for Fullscreen!", 260, 200, 20, LIGHTGRAY);
 
         EndDrawing();
+        if (IsKeyPressed(KEY_SPACE) {  // I will make sound appear simultaneously with collsision when we create balls
+             PlaySound(bam);
+            }
         //----------------------------------------------------------------------------------
     }
 
     // De-Initialization
     //--------------------------------------------------------------------------------------
+     CloseAudioDevice();
     CloseWindow();        // Close window and OpenGL context
     //--------------------------------------------------------------------------------------
 
