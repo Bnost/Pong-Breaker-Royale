@@ -51,7 +51,7 @@ int main()
     InitWindow(ScreenWidth, ScreenHeight, "Window");  //Set up the window
 
     InitAudioDevice(); // audio initiliazed
-    Sound bam = LoadSound("pop.ogg");
+    Sound bam = LoadSound("Pop.ogg");
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
 
