@@ -1,1 +1,50 @@
-Deniz's codes.
+#include "raylib.h"
+
+int main() {
+
+	InitWindow(800, 450, "sound test");
+	InitAudioDevice();
+	int x = 350;
+
+	
+
+
+	SetTargetFPS(60);
+	Sound bam = LoadSound("RESOURCES/Pop.ogg");
+
+	while (!WindowShouldClose()) {
+		
+		BeginDrawing();
+		ClearBackground(RAYWHITE);
+		
+
+		if (IsKeyPressedRepeat(KEY_RIGHT)) {
+			x += 5;
+		}
+
+		if (IsKeyPressed(KEY_SPACE)) {
+
+			PlaySound(bam);
+		
+		}
+
+		DrawRectangle(x,175, 100, 100, RED);
+
+		
+
+		EndDrawing();
+		
+	}
+
+
+	
+
+
+
+
+
+	CloseAudioDevice();
+	CloseWindow();
+
+	return 0;
+}
