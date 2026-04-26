@@ -69,7 +69,7 @@ int main(void)
 
     InitWindow(screenWidth, screenHeight, "Raylib - Pong Breaker");
     InitAudioDevice(); // initilizing sound effect
-    Sound bam = LoadSound("raysound/Pop.ogg");  // defining sound effect
+    Sound bam = LoadSound("Pop.ogg");  // defining sound effect
 
     SetTargetFPS(60);
 
