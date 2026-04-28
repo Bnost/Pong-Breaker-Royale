@@ -56,7 +56,7 @@ int main(void)
     Brick bricks[5][10];
     for (int i = 0; i < 5; i++) {
         for (int j = 0; j < 10; j++) {
-            bricks[i][j].rect = Rectangle{ j * (baseScreenWidth / 10.0f) * scaleX + screenWidth * 0.006f,
+            bricks[i][j].rect = (Rectangle){ j * (baseScreenWidth / 10.0f) * scaleX + screenWidth * 0.006f,
                 i * (baseScreenHeight / 15.0f) * scaleY + screenHeight * 0.11f ,
                 (baseScreenWidth / 11.4f) * scaleX,
                 (baseScreenHeight / 22.5f) * scaleY
@@ -135,18 +135,18 @@ int main(void)
         case STATE_MENU:
             ClearBackground(RAYWHITE);
             // Menüye dönünce paddle ve topu ortala, tuğlaları resetle
-            player1.rect = Rectangle { screenWidth / 2 - (basePaddleWidth / 2) * scaleX, screenHeight / 2 + 200 * scaleY, basePaddleWidth * scaleX, basePaddleHeight * scaleY };
+            player1.rect = (Rectangle){ screenWidth / 2 - (basePaddleWidth / 2) * scaleX, screenHeight / 2 + 200 * scaleY, basePaddleWidth * scaleX, basePaddleHeight * scaleY };
             player1.speed = basePaddleSpeed * scaleX;
-            player2.rect = Rectangle{ screenWidth / 2 - (basePaddleWidth / 2) * scaleX, up, basePaddleWidth * scaleX, basePaddleHeight * scaleY };
+            player2.rect = (Rectangle){ screenWidth / 2 - (basePaddleWidth / 2) * scaleX, up, basePaddleWidth * scaleX, basePaddleHeight * scaleY };
             player2.speed = basePaddleSpeed * scaleX;
 
-            ball.position = Vector2 { screenWidth / 2.00f, screenHeight / 2 + 135 * scaleY };
+            ball.position = (Vector2){ screenWidth / 2.00f, screenHeight / 2 + 135 * scaleY };
             ball.radius = baseBallRadius * ((scaleX + scaleY) / 2.0f);
             ball.speed.x = baseBallSpeed * scaleX;
             ball.speed.y = -baseBallSpeed * scaleY;
             for (int i = 0; i < 5; i++) {
                 for (int j = 0; j < 10; j++) {
-                    bricks[i][j].rect = Rectangle{
+                    bricks[i][j].rect = (Rectangle){
                         j * (baseScreenWidth / 10.0f) * scaleX + screenWidth * 0.006f,
                         i * (baseScreenHeight / 15.0f) * scaleY + screenHeight * 0.35f,
                         (baseScreenWidth / 11.4f) * scaleX,
