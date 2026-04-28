@@ -20,6 +20,7 @@ typedef struct {
     Rectangle rect;
     float speed;
     Color color;
+    float stunTimer;
 } Paddle;
 
 typedef struct {
@@ -45,6 +46,16 @@ ScoreEntry topScores[MAX_SCORES];
 void LoadScores();
 void SaveScore(const char* name, int newScore);
 void DrawLeaderboard();
+
+typedef struct {
+    Vector2 position;
+    bool active;
+    float speed;
+    float size;
+    Color color;
+} DrillProjectile;
+
+DrillProjectile drill = {0};
 
 int score1 = 0;
 int score2 = 0;
@@ -103,6 +114,7 @@ int main(void)
     Sound bam = LoadSound("Pop.ogg"); 
     
     Texture2D mikuLaserTex = LoadTexture("MikuLaser.png");
+    Texture2D menuBgTex = LoadTexture("menubackground.jpg");
 
     LoadScores();
 
@@ -173,8 +185,16 @@ int main(void)
         switch (currentScreen)
         {
         case STATE_MENU:
-            ClearBackground(RAYWHITE);
-            DrawText("PONG BREAKER ROYALE OYNA", screenWidth * 0.25f, screenHeight * 0.44f, screenHeight * 0.044f, BLACK);
+            DrawTexturePro(menuBgTex, 
+                           (Rectangle){0, 0, menuBgTex.width, menuBgTex.height}, 
+                           (Rectangle){0, 0, screenWidth, screenHeight}, 
+                           (Vector2){0, 0}, 0.0f, WHITE);
+
+            // Menü için RPG Maker tarzı yarı saydam arka plan kutusu
+            Rectangle bgBox = { screenWidth * 0.15f, screenHeight * 0.35f, screenWidth * 0.70f, screenHeight * 0.55f };
+            DrawRectangleRec(bgBox, (Color){ 0, 0, 0, 180 });
+
+            DrawText("PONG BREAKER ROYALE OYNA", screenWidth * 0.25f, screenHeight * 0.44f, screenHeight * 0.044f, RAYWHITE);
 
             Rectangle playRect = { screenWidth / 2 - screenWidth * 0.062f, screenHeight * 0.56f, screenWidth * 0.15f, screenHeight * 0.055f };
             Rectangle scoreRect = { screenWidth / 2 - screenWidth * 0.062f, screenHeight * 0.67f, screenWidth * 0.15f, screenHeight * 0.055f };
@@ -191,9 +211,9 @@ int main(void)
 
             if (hovered) menuSelection = hovered;
 
-            DrawText("Oyna", playRect.x, playRect.y, screenHeight * 0.044f, (menuSelection == 1) ? RED : BLACK);
-            DrawText("Skorlar", scoreRect.x, scoreRect.y, screenHeight * 0.044f, (menuSelection == 2) ? RED : BLACK);
-            DrawText("Cikis", exitRect.x, exitRect.y, screenHeight * 0.044f, (menuSelection == 3) ? RED : BLACK);
+            DrawText("Oyna", playRect.x, playRect.y, screenHeight * 0.044f, (menuSelection == 1) ? RED : LIGHTGRAY);
+            DrawText("Skorlar", scoreRect.x, scoreRect.y, screenHeight * 0.044f, (menuSelection == 2) ? RED : LIGHTGRAY);
+            DrawText("Cikis", exitRect.x, exitRect.y, screenHeight * 0.044f, (menuSelection == 3) ? RED : LIGHTGRAY);
 
             if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
                 if (hovered == 1) currentScreen = STATE_CHOICE;
@@ -241,6 +261,7 @@ int main(void)
                 isBotMode = (choiceSelection == 2);
                 
                 // Oyunu Başlatmadan Önce Nesneleri Sıfırla
+                drill.active = false;
                 score1 = 0;
                 score2 = 0;
                 char1.currentCooldown = char1.cooldownMax;
@@ -250,7 +271,9 @@ int main(void)
                 char2.isSkillReady = false;
                 char2.isSkillActive = false;
                 player1.rect = (Rectangle){ screenWidth / 2 - (basePaddleWidth/2) * scaleX, screenHeight / 2 + 150 * scaleY, basePaddleWidth * scaleX, basePaddleHeight * scaleY };
+                player1.stunTimer = 0.0f;
                 player2.rect = (Rectangle){ screenWidth / 2 - (basePaddleWidth/2) * scaleX, screenHeight / 2 - 170 * scaleY, basePaddleWidth * scaleX, basePaddleHeight * scaleY };
+                player2.stunTimer = 0.0f;
                 ball1.position = (Vector2){ screenWidth / 2.0f, screenHeight / 2.0f + 135 * scaleY };
                 ball1.speed.x = baseBallSpeed * scaleX;
                 ball1.speed.y = -baseBallSpeed * scaleY;
@@ -312,47 +335,69 @@ int main(void)
                 char2.skillDuration = 4.0f;
                 char2.skillTimer = 4.0f;
                 char2.skillTickTimer = 0.5f;
+                
+                drill.active = true;
+                drill.size = 30.0f * scaleX;
+                drill.position = (Vector2){ player2.rect.x + player2.rect.width / 2.0f, player2.rect.y + player2.rect.height };
+                drill.speed = 500.0f * scaleY;
+                drill.color = char2.themeColor;
             } else if (isBotMode && char2.isSkillReady && (rand() % 100 < 2)) {
                 char2.isSkillReady = false;
                 char2.isSkillActive = true;
                 char2.skillDuration = 4.0f;
                 char2.skillTimer = 4.0f;
                 char2.skillTickTimer = 0.5f;
+                
+                drill.active = true;
+                drill.size = 30.0f * scaleX;
+                drill.position = (Vector2){ player2.rect.x + player2.rect.width / 2.0f, player2.rect.y + player2.rect.height };
+                drill.speed = 500.0f * scaleY;
+                drill.color = char2.themeColor;
             }
 
             // Player 1 Movement
-            if (IsKeyDown(KEY_RIGHT) && player1.rect.x < screenWidth - player1.rect.width) {
-                player1.rect.x += player1.speed * GetFrameTime();
-                if (player1.rect.x > screenWidth - player1.rect.width) player1.rect.x = screenWidth - player1.rect.width;
-            }
-            if (IsKeyDown(KEY_LEFT) && player1.rect.x > 0) {
-                player1.rect.x -= player1.speed * GetFrameTime();
-                if (player1.rect.x < 0) player1.rect.x = 0;
+            if (player1.stunTimer > 0.0f) {
+                player1.stunTimer -= GetFrameTime();
+                if (player1.stunTimer < 0.0f) player1.stunTimer = 0.0f;
+            } else {
+                if (IsKeyDown(KEY_RIGHT) && player1.rect.x < screenWidth - player1.rect.width) {
+                    player1.rect.x += player1.speed * GetFrameTime();
+                    if (player1.rect.x > screenWidth - player1.rect.width) player1.rect.x = screenWidth - player1.rect.width;
+                }
+                if (IsKeyDown(KEY_LEFT) && player1.rect.x > 0) {
+                    player1.rect.x -= player1.speed * GetFrameTime();
+                    if (player1.rect.x < 0) player1.rect.x = 0;
+                }
             }
 
             // Player 2 Movement
-            if (isBotMode) {
-                int k = rand() % 10 + 1, r = rand() % 10 + 1; 
-                int c = screenWidth / 4; 
-                double velocity; 
-                if (screenWidth >= player2.rect.x + player2.rect.width && (ball2.position.x >= player2.rect.x + player2.rect.width && k != 10)) { 
-                    if ((r != 1 && player2.rect.x + c <= ball2.position.x) || (k == 5 && player2.rect.x + c >= ball2.position.x)) velocity = 1; else { velocity = 0.4; }
-                    player2.rect.x += player2.speed * GetFrameTime() * velocity;
-                    if (player2.rect.x > screenWidth - player2.rect.width) player2.rect.x = screenWidth - player2.rect.width;
-                }
-                if (player2.rect.x >= ball2.position.x && k != 10) {
-                    if (r != 1 && player2.rect.x >= ball2.position.x + c || (k == 9 && player2.rect.x >= ball2.position.x)) velocity = 1; else { velocity = 0.4; };
-                    player2.rect.x -= player2.speed * GetFrameTime() * velocity;
-                    if (player2.rect.x < 0) player2.rect.x = 0;
-                }
+            if (player2.stunTimer > 0.0f) {
+                player2.stunTimer -= GetFrameTime();
+                if (player2.stunTimer < 0.0f) player2.stunTimer = 0.0f;
             } else {
-                if (IsKeyDown(KEY_D) && player2.rect.x < screenWidth - player2.rect.width) {
-                    player2.rect.x += player2.speed * GetFrameTime();
-                    if (player2.rect.x > screenWidth - player2.rect.width) player2.rect.x = screenWidth - player2.rect.width;
-                }
-                if (IsKeyDown(KEY_A) && player2.rect.x > 0) {
-                    player2.rect.x -= player2.speed * GetFrameTime();
-                    if (player2.rect.x < 0) player2.rect.x = 0;
+                if (isBotMode) {
+                    int k = rand() % 10 + 1, r = rand() % 10 + 1; 
+                    int c = screenWidth / 4; 
+                    double velocity; 
+                    if (screenWidth >= player2.rect.x + player2.rect.width && (ball2.position.x >= player2.rect.x + player2.rect.width && k != 10)) { 
+                        if ((r != 1 && player2.rect.x + c <= ball2.position.x) || (k == 5 && player2.rect.x + c >= ball2.position.x)) velocity = 1; else { velocity = 0.4; }
+                        player2.rect.x += player2.speed * GetFrameTime() * velocity;
+                        if (player2.rect.x > screenWidth - player2.rect.width) player2.rect.x = screenWidth - player2.rect.width;
+                    }
+                    if (player2.rect.x >= ball2.position.x && k != 10) {
+                        if (r != 1 && player2.rect.x >= ball2.position.x + c || (k == 9 && player2.rect.x >= ball2.position.x)) velocity = 1; else { velocity = 0.4; };
+                        player2.rect.x -= player2.speed * GetFrameTime() * velocity;
+                        if (player2.rect.x < 0) player2.rect.x = 0;
+                    }
+                } else {
+                    if (IsKeyDown(KEY_D) && player2.rect.x < screenWidth - player2.rect.width) {
+                        player2.rect.x += player2.speed * GetFrameTime();
+                        if (player2.rect.x > screenWidth - player2.rect.width) player2.rect.x = screenWidth - player2.rect.width;
+                    }
+                    if (IsKeyDown(KEY_A) && player2.rect.x > 0) {
+                        player2.rect.x -= player2.speed * GetFrameTime();
+                        if (player2.rect.x < 0) player2.rect.x = 0;
+                    }
                 }
             }
 
@@ -421,6 +466,47 @@ int main(void)
                     }
                     if (hit) PlaySound(bam); 
                     char1.skillTickTimer = 0.0f;
+                }
+            }
+
+            // Drill Logic (Teto's Skill)
+            if (drill.active) {
+                drill.position.y += drill.speed * GetFrameTime();
+                
+                // Üçgen çizimi (aşağı bakan üçgen)
+                Vector2 v1 = { drill.position.x, drill.position.y + drill.size }; // Alt uç
+                Vector2 v2 = { drill.position.x - drill.size / 2.0f, drill.position.y }; // Sol üst
+                Vector2 v3 = { drill.position.x + drill.size / 2.0f, drill.position.y }; // Sağ üst
+                
+                // Çizim sorunlarına karşı iki yönde de çizelim (culling bypass)
+                DrawTriangle(v2, v1, v3, drill.color);
+                DrawTriangle(v3, v1, v2, drill.color);
+                
+                Rectangle drillRect = { drill.position.x - drill.size / 2.0f, drill.position.y, drill.size, drill.size };
+                
+                // Tuğlaları kırma
+                bool hitBrick = false;
+                for (int i = 0; i < BRICK_ROWS; i++) {
+                    for (int j = 0; j < BRICK_COLS; j++) {
+                        if (bricks[i][j].active && CheckCollisionRecs(drillRect, bricks[i][j].rect)) {
+                            bricks[i][j].active = false;
+                            score2 += 10;
+                            hitBrick = true;
+                        }
+                    }
+                }
+                if (hitBrick) PlaySound(bam);
+                
+                // Rakip platforma çarpma kontrolü
+                if (CheckCollisionRecs(drillRect, player1.rect)) {
+                    drill.active = false;
+                    player1.stunTimer = 2.5f;
+                    PlaySound(bam);
+                }
+                
+                // Ekrandan çıkma kontrolü
+                if (drill.position.y > screenHeight) {
+                    drill.active = false;
                 }
             }
 
@@ -523,6 +609,7 @@ int main(void)
 
     UnloadSound(bam); 
     UnloadTexture(mikuLaserTex);
+    UnloadTexture(menuBgTex);
     CloseAudioDevice();
     CloseWindow();
 
