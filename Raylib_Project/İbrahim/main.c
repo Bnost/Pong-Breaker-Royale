@@ -3,7 +3,8 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
-#include "characters.h" 
+#include "characters.h"
+#include <math.h>
 
 #define BRICK_ROWS 8
 #define BRICK_COLS 14
@@ -12,6 +13,7 @@
 typedef enum {
     STATE_MENU,
     STATE_CHOICE,
+    STATE_CHARACTER,
     STATE_HIGHSCORE,
     STATE_GAME,
 } GameState;
@@ -60,6 +62,21 @@ typedef struct {
 } DrillProjectile;
 
 DrillProjectile drill = {0};
+
+typedef struct {
+    Rectangle rect;
+    bool active;
+    float speed;
+    float size;
+    float targetX; // Hedef X konumu (kaçınılmaz)
+    Color color;
+} NeruCube;
+
+NeruCube neruCube = {0};
+
+int p1CharChoice = 1; // 1=Miku, 2=Teto, 3=Neru
+int p2CharChoice = 2;
+bool isP1Selecting = true; // Karakter seçiminde sıra kimin
 
 int score1 = 0;
 int score2 = 0;
@@ -243,8 +260,17 @@ int main(void)
             break;
 
         case STATE_CHOICE:
-            ClearBackground(RAYWHITE);
-            DrawText("OYUN MODU SECIN", screenWidth * 0.35f, screenHeight * 0.30f, screenHeight * 0.050f, BLACK);
+            DrawTexturePro(menuBgTex,
+                           (Rectangle){0, 0, menuBgTex.width, menuBgTex.height},
+                           (Rectangle){0, 0, screenWidth, screenHeight},
+                           (Vector2){0, 0}, 0.0f, WHITE);
+
+            {
+                Rectangle choiceBgBox = { screenWidth * 0.15f, screenHeight * 0.20f, screenWidth * 0.70f, screenHeight * 0.65f };
+                DrawRectangleRec(choiceBgBox, (Color){ 0, 0, 0, 180 });
+            }
+
+            DrawText("OYUN MODU SECIN", screenWidth * 0.35f, screenHeight * 0.30f, screenHeight * 0.050f, RAYWHITE);
 
             Rectangle p2Rect = { screenWidth * 0.25f, screenHeight * 0.50f, screenWidth * 0.20f, screenHeight * 0.06f };
             Rectangle botRect = { screenWidth * 0.55f, screenHeight * 0.50f, screenWidth * 0.20f, screenHeight * 0.06f };
@@ -259,64 +285,171 @@ int main(void)
 
             if (choiceHovered) choiceSelection = choiceHovered;
 
-            DrawText("2 Oyuncu", p2Rect.x, p2Rect.y, screenHeight * 0.050f, (choiceSelection == 1) ? RED : BLACK);
-            DrawText("Bot vs", botRect.x, botRect.y, screenHeight * 0.050f, (choiceSelection == 2) ? RED : BLACK);
+            DrawText("2 Oyuncu", p2Rect.x, p2Rect.y, screenHeight * 0.050f, (choiceSelection == 1) ? RED : LIGHTGRAY);
+            DrawText("Bot vs", botRect.x, botRect.y, screenHeight * 0.050f, (choiceSelection == 2) ? RED : LIGHTGRAY);
 
-            bool startGame = false;
             if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
                 if (choiceHovered == 1 || choiceHovered == 2) {
-                    startGame = true;
+                    isBotMode = (choiceSelection == 2);
+                    isP1Selecting = true;
+                    p1CharChoice = 1;
+                    p2CharChoice = 1;
+                    currentScreen = STATE_CHARACTER;
                 }
             }
             if (IsKeyPressed(KEY_ENTER)) {
-                startGame = true;
-            }
-
-            if (startGame) {
                 isBotMode = (choiceSelection == 2);
-                
-                // Oyunu Başlatmadan Önce Nesneleri Sıfırla
-                drill.active = false;
-                drill.currentFrame = 0;
-                drill.frameTimer = 0.0f;
-                drill.maxFrames = 4;
-                drill.frameSpeed = 15.0f;
-                score1 = 0;
-                score2 = 0;
-                char1.currentCooldown = char1.cooldownMax;
-                char1.isSkillReady = false;
-                char1.isSkillActive = false;
-                char2.currentCooldown = char2.cooldownMax;
-                char2.isSkillReady = false;
-                char2.isSkillActive = false;
-                player1.rect = (Rectangle){ screenWidth / 2 - (basePaddleWidth/2) * scaleX, screenHeight / 2 + 150 * scaleY, basePaddleWidth * scaleX, basePaddleHeight * scaleY };
-                player1.stunTimer = 0.0f;
-                player2.rect = (Rectangle){ screenWidth / 2 - (basePaddleWidth/2) * scaleX, screenHeight / 2 - 170 * scaleY, basePaddleWidth * scaleX, basePaddleHeight * scaleY };
-                player2.stunTimer = 0.0f;
-                ball1.position = (Vector2){ screenWidth / 2.0f, screenHeight / 2.0f + 135 * scaleY };
-                ball1.speed.x = baseBallSpeed * scaleX;
-                ball1.speed.y = -baseBallSpeed * scaleY;
-                ball2.position = (Vector2){ screenWidth / 2.0f, screenHeight / 2.0f - 135 * scaleY };
-                ball2.speed.x = baseBallSpeed * scaleX;
-                ball2.speed.y = baseBallSpeed * scaleY;
-                for (int i = 0; i < BRICK_ROWS; i++) {
-                    for (int j = 0; j < BRICK_COLS; j++) {
-                        bricks[i][j].rect = (Rectangle){
-                            j * (baseScreenWidth / BRICK_COLS) * scaleX + (baseScreenWidth / BRICK_COLS * 0.05f) * scaleX,
-                            (baseScreenHeight * 0.35f + i * (baseScreenHeight / 25.0f)) * scaleY,
-                            (baseScreenWidth / BRICK_COLS * 0.9f) * scaleX,
-                            (baseScreenHeight / 30.0f) * scaleY
-                        };
-                        if (j == 0 || j == BRICK_COLS - 1) {
-                            bricks[i][j].active = false;
-                        } else {
-                            bricks[i][j].active = true;
-                        }
-                    }
-                }
-                currentScreen = STATE_GAME;
+                isP1Selecting = true;
+                p1CharChoice = 1;
+                p2CharChoice = 1;
+                currentScreen = STATE_CHARACTER;
             }
             break;
+
+        case STATE_CHARACTER:
+        {
+            DrawTexturePro(menuBgTex,
+                           (Rectangle){0, 0, menuBgTex.width, menuBgTex.height},
+                           (Rectangle){0, 0, screenWidth, screenHeight},
+                           (Vector2){0, 0}, 0.0f, WHITE);
+
+            Rectangle charBgBox = { screenWidth * 0.10f, screenHeight * 0.10f, screenWidth * 0.80f, screenHeight * 0.80f };
+            DrawRectangleRec(charBgBox, (Color){ 0, 0, 0, 180 });
+
+            // Başlık
+            const char* selectTitle = isP1Selecting ? "Player 1: Select your character" : "Player 2: Select your character";
+            DrawText(selectTitle, screenWidth * 0.5f - MeasureText(selectTitle, (int)(screenHeight * 0.038f)) / 2,
+                     screenHeight * 0.15f, (int)(screenHeight * 0.038f), RAYWHITE);
+
+            // 3 karakter karesi
+            float boxSize = screenWidth * 0.14f;
+            float boxY = screenHeight * 0.35f;
+            float spacing = screenWidth * 0.20f;
+            float startX = screenWidth * 0.5f - spacing;
+
+            Color charColors[3] = { SKYBLUE, RED, YELLOW };
+            const char* charNames[3] = { "Miku", "Teto", "Neru" };
+            int* currentSel = isP1Selecting ? &p1CharChoice : &p2CharChoice;
+
+            // Klavye navigasyonu (Player 1: sağ/sol, Player 2: D/A)
+            if (isP1Selecting) {
+                if (IsKeyPressed(KEY_RIGHT) && *currentSel < 3) (*currentSel)++;
+                if (IsKeyPressed(KEY_LEFT)  && *currentSel > 1) (*currentSel)--;
+            } else {
+                if (IsKeyPressed(KEY_D) && *currentSel < 3) (*currentSel)++;
+                if (IsKeyPressed(KEY_A) && *currentSel > 1) (*currentSel)--;
+            }
+
+            Vector2 charMouse = GetMousePosition();
+            for (int i = 0; i < 3; i++) {
+                Rectangle boxRect = { startX + i * spacing - boxSize / 2.0f, boxY, boxSize, boxSize };
+                DrawRectangleRec(boxRect, charColors[i]);
+
+                // Mouse hover
+                if (CheckCollisionPointRec(charMouse, boxRect)) {
+                    *currentSel = i + 1;
+                }
+
+                // Seçili çerçeve
+                if (*currentSel == i + 1) {
+                    DrawRectangleLinesEx(boxRect, 3, WHITE);
+                }
+
+                // İsim
+                int nameSize = (int)(screenHeight * 0.032f);
+                DrawText(charNames[i], (int)(boxRect.x + boxSize / 2.0f - MeasureText(charNames[i], nameSize) / 2),
+                         (int)(boxY + boxSize + screenHeight * 0.03f), nameSize, RAYWHITE);
+            }
+
+            // Skill açıklaması
+            const char* skillDesc = "Bu skill sana oyunda yardim edecek!";
+            int descSize = (int)(screenHeight * 0.030f);
+            DrawText(skillDesc, screenWidth / 2 - MeasureText(skillDesc, descSize) / 2,
+                     (int)(screenHeight * 0.75f), descSize, LIGHTGRAY);
+
+            // Seçim onayı
+            bool charConfirmed = false;
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                for (int i = 0; i < 3; i++) {
+                    Rectangle boxRect = { startX + i * spacing - boxSize / 2.0f, boxY, boxSize, boxSize };
+                    if (CheckCollisionPointRec(charMouse, boxRect) && *currentSel == i + 1) {
+                        charConfirmed = true;
+                    }
+                }
+            }
+            if (IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_S)) {
+                charConfirmed = true;
+            }
+
+            if (charConfirmed) {
+                if (isP1Selecting) {
+                    if (isBotMode) {
+                        // Bot için rastgele seçim
+                        p2CharChoice = rand() % 3 + 1;
+                        // Karakterleri ata
+                        char1 = InitCharacter(p1CharChoice);
+                        char2 = InitCharacter(p2CharChoice);
+                        // Oyunu başlat
+                        goto START_GAME;
+                    } else {
+                        isP1Selecting = false;
+                        p2CharChoice = 1;
+                    }
+                } else {
+                    // Her iki oyuncu da seçti
+                    char1 = InitCharacter(p1CharChoice);
+                    char2 = InitCharacter(p2CharChoice);
+
+                    START_GAME:;
+                    drill.active = false;
+                    drill.currentFrame = 0;
+                    drill.frameTimer = 0.0f;
+                    drill.maxFrames = 4;
+                    drill.frameSpeed = 15.0f;
+                    neruCube.active = false;
+                    score1 = 0;
+                    score2 = 0;
+                    char1.currentCooldown = char1.cooldownMax;
+                    char1.isSkillReady = false;
+                    char1.isSkillActive = false;
+                    char2.currentCooldown = char2.cooldownMax;
+                    char2.isSkillReady = false;
+                    char2.isSkillActive = false;
+                    player1.rect = (Rectangle){ screenWidth / 2 - (basePaddleWidth/2) * scaleX, screenHeight / 2 + 150 * scaleY, basePaddleWidth * scaleX, basePaddleHeight * scaleY };
+                    player1.color = char1.themeColor;
+                    player1.stunTimer = 0.0f;
+                    player2.rect = (Rectangle){ screenWidth / 2 - (basePaddleWidth/2) * scaleX, screenHeight / 2 - 170 * scaleY, basePaddleWidth * scaleX, basePaddleHeight * scaleY };
+                    player2.color = char2.themeColor;
+                    player2.stunTimer = 0.0f;
+                    ball1.color = char1.themeColor;
+                    ball2.color = char2.themeColor;
+                    ball1.position = (Vector2){ screenWidth / 2.0f, screenHeight / 2.0f + 135 * scaleY };
+                    ball1.speed.x = baseBallSpeed * scaleX;
+                    ball1.speed.y = -baseBallSpeed * scaleY;
+                    ball2.position = (Vector2){ screenWidth / 2.0f, screenHeight / 2.0f - 135 * scaleY };
+                    ball2.speed.x = baseBallSpeed * scaleX;
+                    ball2.speed.y = baseBallSpeed * scaleY;
+                    for (int i = 0; i < BRICK_ROWS; i++) {
+                        for (int j = 0; j < BRICK_COLS; j++) {
+                            bricks[i][j].rect = (Rectangle){
+                                j * (baseScreenWidth / BRICK_COLS) * scaleX + (baseScreenWidth / BRICK_COLS * 0.05f) * scaleX,
+                                (baseScreenHeight * 0.35f + i * (baseScreenHeight / 25.0f)) * scaleY,
+                                (baseScreenWidth / BRICK_COLS * 0.9f) * scaleX,
+                                (baseScreenHeight / 30.0f) * scaleY
+                            };
+                            if (j == 0 || j == BRICK_COLS - 1) {
+                                bricks[i][j].active = false;
+                            } else {
+                                bricks[i][j].active = true;
+                            }
+                        }
+                    }
+                    currentScreen = STATE_GAME;
+                }
+            }
+        }
+        break;
+
 
         case STATE_HIGHSCORE:
             ClearBackground(BLUE);
@@ -338,40 +471,55 @@ int main(void)
             UpdateCooldown(&char1, GetFrameTime());
             UpdateCooldown(&char2, GetFrameTime());
 
-            // Player 1 Skill
+            // --- Skill Tetikleme Yardımcı Makrosu ---
+            // Player 1 Skill (KEY_DOWN)
             if (IsKeyPressed(KEY_DOWN) && char1.isSkillReady) {
                 char1.isSkillReady = false;
                 char1.isSkillActive = true;
                 char1.skillDuration = 4.0f;
                 char1.skillTimer = 4.0f;
-                char1.skillTickTimer = 0.5f; 
+                char1.skillTickTimer = 0.5f;
+                if (char1.skill == SKILL_ROCKET) {
+                    // Teto: Player 1 platformundan yukarı doğru
+                    drill.active = true;
+                    drill.size = 80.0f * scaleX;
+                    drill.position = (Vector2){ player1.rect.x + player1.rect.width / 2.0f, player1.rect.y };
+                    drill.speed = -500.0f * scaleY; // Negatif = yukarı
+                    drill.color = char1.themeColor;
+                } else if (char1.skill == SKILL_STUN) {
+                    // Neru: Player 1 konumundan Player 2'ye doğru (yukarı = negatif Y)
+                    neruCube.active = true;
+                    neruCube.size = 40.0f * scaleX;
+                    neruCube.rect = (Rectangle){ player1.rect.x + player1.rect.width / 2.0f - 20.0f * scaleX, player1.rect.y - 20.0f * scaleX, neruCube.size, neruCube.size };
+                    neruCube.speed = -600.0f * scaleY; // Yukarı = negatif
+                    neruCube.color = char1.themeColor;
+                }
             }
 
-            // Player 2 Skill
-            if (!isBotMode && IsKeyPressed(KEY_S) && char2.isSkillReady) {
+            // Player 2 Skill (KEY_S veya Bot)
+            bool p2SkillFire = (!isBotMode && IsKeyPressed(KEY_S) && char2.isSkillReady) ||
+                               (isBotMode && char2.isSkillReady && (rand() % 100 < 2));
+            if (p2SkillFire) {
                 char2.isSkillReady = false;
                 char2.isSkillActive = true;
                 char2.skillDuration = 4.0f;
                 char2.skillTimer = 4.0f;
                 char2.skillTickTimer = 0.5f;
-                
-                drill.active = true;
-                drill.size = 80.0f * scaleX;
-                drill.position = (Vector2){ player2.rect.x + player2.rect.width / 2.0f, player2.rect.y + player2.rect.height };
-                drill.speed = 500.0f * scaleY;
-                drill.color = char2.themeColor;
-            } else if (isBotMode && char2.isSkillReady && (rand() % 100 < 2)) {
-                char2.isSkillReady = false;
-                char2.isSkillActive = true;
-                char2.skillDuration = 4.0f;
-                char2.skillTimer = 4.0f;
-                char2.skillTickTimer = 0.5f;
-                
-                drill.active = true;
-                drill.size = 80.0f * scaleX;
-                drill.position = (Vector2){ player2.rect.x + player2.rect.width / 2.0f, player2.rect.y + player2.rect.height };
-                drill.speed = 500.0f * scaleY;
-                drill.color = char2.themeColor;
+                if (char2.skill == SKILL_ROCKET) {
+                    // Teto: Player 2 platformundan aşağı doğru
+                    drill.active = true;
+                    drill.size = 80.0f * scaleX;
+                    drill.position = (Vector2){ player2.rect.x + player2.rect.width / 2.0f, player2.rect.y + player2.rect.height };
+                    drill.speed = 500.0f * scaleY; // Pozitif = aşağı
+                    drill.color = char2.themeColor;
+                } else if (char2.skill == SKILL_STUN) {
+                    // Neru: Player 2 konumundan Player 1'e doğru (aşağı = pozitif Y)
+                    neruCube.active = true;
+                    neruCube.size = 40.0f * scaleX;
+                    neruCube.rect = (Rectangle){ player2.rect.x + player2.rect.width / 2.0f - 20.0f * scaleX, player2.rect.y + player2.rect.height, neruCube.size, neruCube.size };
+                    neruCube.speed = 600.0f * scaleY; // Aşağı = pozitif
+                    neruCube.color = char2.themeColor;
+                }
             }
 
             // Player 1 Movement
@@ -447,44 +595,57 @@ int main(void)
             DrawRectangleLines(screenWidth - 10 * scaleX - barWidth, barY, barWidth, barHeight, LIGHTGRAY);
             DrawRectangle(screenWidth - 10 * scaleX - barWidth, barY + barHeight * (1.0f - p1Fill), barWidth, barHeight * p1Fill, char1.themeColor);
 
-            // Laser Logic
+            // Laser Logic - char1 (Player1, yukarı doğru)
             Rectangle laserRect = {0};
             if (char1.isSkillActive && char1.skill == SKILL_LASER) {
                 char1.frameTimer += GetFrameTime();
                 if (char1.frameTimer >= (1.0f / char1.frameSpeed)) {
                     char1.frameTimer = 0.0f;
                     char1.currentFrame++;
-                    if (char1.currentFrame >= char1.maxFrames) {
-                        char1.currentFrame = 0;
-                    }
+                    if (char1.currentFrame >= char1.maxFrames) char1.currentFrame = 0;
                 }
-
-                float laserW = player1.rect.width / 2.0f; // Platformun yarısı genişliğinde
-                // Lazer platformun tam üzerinden çıkıyor.
+                float laserW = player1.rect.width / 2.0f;
                 laserRect = (Rectangle){ player1.rect.x + player1.rect.width/2 - laserW/2, 0, laserW, player1.rect.y };
-                
                 float frameWidth = (float)mikuLaserTex.width / char1.maxFrames;
-                // Görselin altındaki ve üstündeki saydam/boş kısımları kırparak lazerin tam oturmasını sağlıyoruz
                 Rectangle sourceRec = { char1.currentFrame * frameWidth, 60.0f, frameWidth, 796.0f };
-                Rectangle destRec = laserRect;
-                Vector2 origin = { 0.0f, 0.0f };
-
                 BeginBlendMode(BLEND_ADDITIVE);
-                DrawTexturePro(mikuLaserTex, sourceRec, destRec, origin, 0.0f, WHITE);
+                DrawTexturePro(mikuLaserTex, sourceRec, laserRect, (Vector2){0,0}, 0.0f, WHITE);
                 EndBlendMode();
-                
                 if (char1.skillTickTimer >= 0.5f) {
                     bool hit = false;
-                    for (int i = 0; i < BRICK_ROWS; i++) {
-                        for (int j = 0; j < BRICK_COLS; j++) {
-                            if (bricks[i][j].active && CheckCollisionRecs(laserRect, bricks[i][j].rect)) {
-                                score1 += 10;
-                                hit = true;
-                            }
-                        }
-                    }
-                    if (hit) PlaySound(bam); 
+                    for (int i = 0; i < BRICK_ROWS; i++)
+                        for (int j = 0; j < BRICK_COLS; j++)
+                            if (bricks[i][j].active && CheckCollisionRecs(laserRect, bricks[i][j].rect)) { score1 += 10; hit = true; }
+                    if (hit) PlaySound(bam);
                     char1.skillTickTimer = 0.0f;
+                }
+            }
+
+            // Laser Logic - char2 (Player2, aşağı doğru)
+            Rectangle laser2Rect = {0};
+            if (char2.isSkillActive && char2.skill == SKILL_LASER) {
+                char2.frameTimer += GetFrameTime();
+                if (char2.frameTimer >= (1.0f / char2.frameSpeed)) {
+                    char2.frameTimer = 0.0f;
+                    char2.currentFrame++;
+                    if (char2.currentFrame >= char2.maxFrames) char2.currentFrame = 0;
+                }
+                float laserW2 = player2.rect.width / 2.0f;
+                // Player2 aşağıya doğru lazer: player2 platformundan ekranın altına kadar
+                float laserTop = player2.rect.y + player2.rect.height;
+                laser2Rect = (Rectangle){ player2.rect.x + player2.rect.width/2 - laserW2/2, laserTop, laserW2, screenHeight - laserTop };
+                float frameWidth2 = (float)mikuLaserTex.width / char2.maxFrames;
+                Rectangle sourceRec2 = { char2.currentFrame * frameWidth2, 60.0f, frameWidth2, 796.0f };
+                BeginBlendMode(BLEND_ADDITIVE);
+                DrawTexturePro(mikuLaserTex, sourceRec2, laser2Rect, (Vector2){0,0}, 0.0f, WHITE);
+                EndBlendMode();
+                if (char2.skillTickTimer >= 0.5f) {
+                    bool hit = false;
+                    for (int i = 0; i < BRICK_ROWS; i++)
+                        for (int j = 0; j < BRICK_COLS; j++)
+                            if (bricks[i][j].active && CheckCollisionRecs(laser2Rect, bricks[i][j].rect)) { score2 += 10; hit = true; }
+                    if (hit) PlaySound(bam);
+                    char2.skillTickTimer = 0.0f;
                 }
             }
 
@@ -530,17 +691,66 @@ int main(void)
                 if (hitBrick) PlaySound(bam);
                 
                 // Rakip platforma çarpma kontrolü
-                if (CheckCollisionRecs(drillRect, player1.rect)) {
+                // Çarpışma: hangi oyuncuya gidiyor? (speed > 0 = aşağı = player1'e, speed < 0 = yukarı = player2'ye)
+                if (drill.speed > 0 && CheckCollisionRecs(drillRect, player1.rect)) {
                     drill.active = false;
-                    char2.skillTimer = 0.0f; // Cooldown'u hemen başlat
+                    char2.skillTimer = 0.0f;
                     player1.stunTimer = 2.5f;
+                    PlaySound(bam);
+                } else if (drill.speed < 0 && CheckCollisionRecs(drillRect, player2.rect)) {
+                    drill.active = false;
+                    char1.skillTimer = 0.0f;
+                    player2.stunTimer = 2.5f;
                     PlaySound(bam);
                 }
                 
                 // Ekrandan çıkma kontrolü
-                if (drill.position.y > screenHeight) {
+                if (drill.position.y > screenHeight || drill.position.y < -drill.size) {
                     drill.active = false;
-                    char2.skillTimer = 0.0f; // Cooldown'u hemen başlat
+                    if (drill.speed > 0) char2.skillTimer = 0.0f;
+                    else char1.skillTimer = 0.0f;
+                }
+            }
+
+            // Neru Cube Logic (SKILL_STUN)
+            if (neruCube.active) {
+                neruCube.rect.y += neruCube.speed * GetFrameTime();
+
+                // Hedef platformu belirle ve X ekseninde takip et (kaçınılmaz)
+                Rectangle* targetPaddle = (neruCube.speed > 0) ? &player1.rect : &player2.rect;
+                float targetCenterX = targetPaddle->x + targetPaddle->width / 2.0f;
+                float cubeCenterX   = neruCube.rect.x + neruCube.size / 2.0f;
+                float trackSpeed    = 800.0f * scaleX * GetFrameTime(); // Çok hızlı izle
+                float diff = targetCenterX - cubeCenterX;
+                if (fabsf(diff) < trackSpeed)
+                    neruCube.rect.x += diff;         // Tam ortala
+                else
+                    neruCube.rect.x += (diff > 0 ? 1.0f : -1.0f) * trackSpeed;
+
+                // Neru küpü çiz (kaçınılmaz sarı küp)
+                DrawRectangleRec(neruCube.rect, neruCube.color);
+                DrawRectangleLinesEx(neruCube.rect, 2, WHITE);
+
+                // Çarpışma: hangi yöne gidiyor?
+                if (neruCube.speed > 0 && CheckCollisionRecs(neruCube.rect, player1.rect)) {
+                    // Player 2'nin Neru'su Player 1'e çarptı
+                    neruCube.active = false;
+                    char2.skillTimer = 0.0f;
+                    player1.stunTimer = 4.0f;
+                    PlaySound(bam);
+                } else if (neruCube.speed < 0 && CheckCollisionRecs(neruCube.rect, player2.rect)) {
+                    // Player 1'in Neru'su Player 2'ye çarptı
+                    neruCube.active = false;
+                    char1.skillTimer = 0.0f;
+                    player2.stunTimer = 4.0f;
+                    PlaySound(bam);
+                }
+
+                // Ekrandan çıkma kontrolü (güvenlik için)
+                if (neruCube.rect.y > screenHeight || neruCube.rect.y < -neruCube.size) {
+                    neruCube.active = false;
+                    if (neruCube.speed > 0) char2.skillTimer = 0.0f;
+                    else char1.skillTimer = 0.0f;
                 }
             }
 
