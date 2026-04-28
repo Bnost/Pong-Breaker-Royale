@@ -53,6 +53,10 @@ typedef struct {
     float speed;
     float size;
     Color color;
+    int currentFrame;
+    int maxFrames;
+    float frameTimer;
+    float frameSpeed;
 } DrillProjectile;
 
 DrillProjectile drill = {0};
@@ -115,6 +119,10 @@ int main(void)
     
     Texture2D mikuLaserTex = LoadTexture("MikuLaser.png");
     Texture2D menuBgTex = LoadTexture("menubackground.jpg");
+    Texture2D tetoDrillTex = LoadTexture("tetodrill.png");
+
+    Music menuMusic = LoadMusicStream("triplebaksong.mp3");
+    PlayMusicStream(menuMusic);
 
     LoadScores();
 
@@ -128,6 +136,13 @@ int main(void)
         // F11 ile tam ekran geçişi
         if (IsKeyPressed(KEY_F11)) {
             ToggleFullscreen();
+        }
+
+        UpdateMusicStream(menuMusic);
+        if (currentScreen == STATE_GAME) {
+            PauseMusicStream(menuMusic);
+        } else {
+            ResumeMusicStream(menuMusic);
         }
 
         // Her karede ekran boyutunu güncelle
@@ -262,6 +277,10 @@ int main(void)
                 
                 // Oyunu Başlatmadan Önce Nesneleri Sıfırla
                 drill.active = false;
+                drill.currentFrame = 0;
+                drill.frameTimer = 0.0f;
+                drill.maxFrames = 4;
+                drill.frameSpeed = 15.0f;
                 score1 = 0;
                 score2 = 0;
                 char1.currentCooldown = char1.cooldownMax;
@@ -337,7 +356,7 @@ int main(void)
                 char2.skillTickTimer = 0.5f;
                 
                 drill.active = true;
-                drill.size = 30.0f * scaleX;
+                drill.size = 80.0f * scaleX;
                 drill.position = (Vector2){ player2.rect.x + player2.rect.width / 2.0f, player2.rect.y + player2.rect.height };
                 drill.speed = 500.0f * scaleY;
                 drill.color = char2.themeColor;
@@ -349,7 +368,7 @@ int main(void)
                 char2.skillTickTimer = 0.5f;
                 
                 drill.active = true;
-                drill.size = 30.0f * scaleX;
+                drill.size = 80.0f * scaleX;
                 drill.position = (Vector2){ player2.rect.x + player2.rect.width / 2.0f, player2.rect.y + player2.rect.height };
                 drill.speed = 500.0f * scaleY;
                 drill.color = char2.themeColor;
@@ -471,18 +490,31 @@ int main(void)
 
             // Drill Logic (Teto's Skill)
             if (drill.active) {
+                // Animasyon kontrolü
+                drill.frameTimer += GetFrameTime();
+                if (drill.frameTimer >= (1.0f / drill.frameSpeed)) {
+                    drill.frameTimer = 0.0f;
+                    drill.currentFrame++;
+                    if (drill.currentFrame >= drill.maxFrames) {
+                        drill.currentFrame = 0;
+                    }
+                }
+
                 drill.position.y += drill.speed * GetFrameTime();
                 
-                // Üçgen çizimi (aşağı bakan üçgen)
-                Vector2 v1 = { drill.position.x, drill.position.y + drill.size }; // Alt uç
-                Vector2 v2 = { drill.position.x - drill.size / 2.0f, drill.position.y }; // Sol üst
-                Vector2 v3 = { drill.position.x + drill.size / 2.0f, drill.position.y }; // Sağ üst
-                
-                // Çizim sorunlarına karşı iki yönde de çizelim (culling bypass)
-                DrawTriangle(v2, v1, v3, drill.color);
-                DrawTriangle(v3, v1, v2, drill.color);
-                
                 Rectangle drillRect = { drill.position.x - drill.size / 2.0f, drill.position.y, drill.size, drill.size };
+                
+                // Matkabı çiz (tetodrill.png sprite animasyonu)
+                float frameWidth = (float)tetoDrillTex.width / drill.maxFrames;
+                // Etrafındaki siyahlıkları/boşlukları kesiyoruz (Y ekseninde 250'den başlayıp 440 birim alıyoruz)
+                Rectangle sourceRec = { drill.currentFrame * frameWidth, 250.0f, frameWidth, 440.0f };
+                Rectangle destRec = drillRect;
+                Vector2 origin = { 0.0f, 0.0f };
+                
+                // Miku'daki gibi siyahlıkları yok etmek için
+                BeginBlendMode(BLEND_ADDITIVE);
+                DrawTexturePro(tetoDrillTex, sourceRec, destRec, origin, 0.0f, WHITE);
+                EndBlendMode();
                 
                 // Tuğlaları kırma
                 bool hitBrick = false;
@@ -500,6 +532,7 @@ int main(void)
                 // Rakip platforma çarpma kontrolü
                 if (CheckCollisionRecs(drillRect, player1.rect)) {
                     drill.active = false;
+                    char2.skillTimer = 0.0f; // Cooldown'u hemen başlat
                     player1.stunTimer = 2.5f;
                     PlaySound(bam);
                 }
@@ -507,6 +540,7 @@ int main(void)
                 // Ekrandan çıkma kontrolü
                 if (drill.position.y > screenHeight) {
                     drill.active = false;
+                    char2.skillTimer = 0.0f; // Cooldown'u hemen başlat
                 }
             }
 
@@ -610,6 +644,8 @@ int main(void)
     UnloadSound(bam); 
     UnloadTexture(mikuLaserTex);
     UnloadTexture(menuBgTex);
+    UnloadTexture(tetoDrillTex);
+    UnloadMusicStream(menuMusic);
     CloseAudioDevice();
     CloseWindow();
 
