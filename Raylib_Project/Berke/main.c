@@ -223,6 +223,7 @@ int main(void)
         switch (currentScreen)
         {
         case STATE_MENU:
+            ClearBackground(BLACK);
             DrawTexturePro(menuBgTex,
                 (Rectangle) {
                 0, 0, menuBgTex.width, menuBgTex.height
@@ -238,7 +239,7 @@ int main(void)
             Rectangle bgBox = { screenWidth * 0.15f, screenHeight * 0.35f, screenWidth * 0.70f, screenHeight * 0.55f };
             DrawRectangleRec(bgBox, (Color) { 0, 0, 0, 180 });
 
-            DrawText("PONG BREAKER ROYALE OYNA", screenWidth * 0.25f, screenHeight * 0.44f, screenHeight * 0.044f, RAYWHITE);
+            DrawText("PLAY PONG BREAKER ROYALE", screenWidth * 0.33f, screenHeight * 0.44f, screenHeight * 0.044f, RAYWHITE);
 
             Rectangle playRect = { screenWidth / 2 - screenWidth * 0.062f, screenHeight * 0.56f, screenWidth * 0.15f, screenHeight * 0.055f };
             Rectangle scoreRect = { screenWidth / 2 - screenWidth * 0.062f, screenHeight * 0.67f, screenWidth * 0.15f, screenHeight * 0.055f };
@@ -436,11 +437,11 @@ int main(void)
                     neruCube.active = false;
                     score1 = 0;
                     score2 = 0;
-                    char1.currentCooldown = char1.cooldownMax;
-                    char1.isSkillReady = false;
+                    char1.currentCooldown = 0;
+                    char1.isSkillReady = true;
                     char1.isSkillActive = false;
-                    char2.currentCooldown = char2.cooldownMax;
-                    char2.isSkillReady = false;
+                    char2.currentCooldown = 0;
+                    char2.isSkillReady = true;
                     char2.isSkillActive = false;
                     player1.rect = (Rectangle){ screenWidth / 2 - (basePaddleWidth / 2) * scaleX, screenHeight / 2 + 150 * scaleY, basePaddleWidth * scaleX, basePaddleHeight * scaleY };
                     player1.color = char1.themeColor;
@@ -500,55 +501,56 @@ int main(void)
             UpdateCooldown(&char2, GetFrameTime());
 
             // --- Skill Tetikleme Yardımcı Makrosu ---
-            // Player 1 Skill (KEY_DOWN)
+           // --- Player 1 Skill (KEY_DOWN) ---
             if (IsKeyPressed(KEY_DOWN) && char1.isSkillReady) {
                 char1.isSkillReady = false;
                 char1.isSkillActive = true;
-                char1.skillDuration = 4.0f;
+                char1.currentCooldown = char1.cooldownMax; // BARIN ANINDA BOŞALMASINI SAĞLAR
                 char1.skillTimer = 4.0f;
                 char1.skillTickTimer = 0.5f;
+
                 if (char1.skill == SKILL_ROCKET) {
-                    // Teto: Player 1 platformundan yukarı doğru
                     drill.active = true;
-                    drill.size = 80.0f * scaleX;
                     drill.position = (Vector2){ player1.rect.x + player1.rect.width / 2.0f, player1.rect.y };
-                    drill.speed = -500.0f * scaleY; // Negatif = yukarı
+                    drill.speed = -500.0f * scaleY;
                     drill.color = char1.themeColor;
                 }
                 else if (char1.skill == SKILL_STUN) {
-                    // Neru: Player 1 konumundan Player 2'ye doğru (yukarı = negatif Y)
                     neruCube.active = true;
-                    neruCube.size = 40.0f * scaleX;
-                    neruCube.rect = (Rectangle){ player1.rect.x + player1.rect.width / 2.0f - 20.0f * scaleX, player1.rect.y - 20.0f * scaleX, neruCube.size, neruCube.size };
-                    neruCube.speed = -600.0f * scaleY; // Yukarı = negatif
+                    neruCube.rect = (Rectangle){ player1.rect.x + player1.rect.width / 2.0f - 20.0f * scaleX, player1.rect.y - 20.0f * scaleX, 40.0f * scaleX, 40.0f * scaleX };
+                    neruCube.speed = -600.0f * scaleY;
                     neruCube.color = char1.themeColor;
+                }
+                else if (char1.skill == SKILL_LASER) {
+                    PlaySound(bam);
                 }
             }
 
-            // Player 2 Skill (KEY_S veya Bot)
+            // --- Player 2 Skill (KEY_S veya Bot) ---
             bool p2SkillFire = (!isBotMode && IsKeyPressed(KEY_S) && char2.isSkillReady) ||
                 (isBotMode && char2.isSkillReady && (rand() % 100 < 2));
+
             if (p2SkillFire) {
                 char2.isSkillReady = false;
                 char2.isSkillActive = true;
-                char2.skillDuration = 4.0f;
+                char2.currentCooldown = char2.cooldownMax; // PLAYER 2 İÇİN DE ANINDA BAŞLAT
                 char2.skillTimer = 4.0f;
                 char2.skillTickTimer = 0.5f;
+
                 if (char2.skill == SKILL_ROCKET) {
-                    // Teto: Player 2 platformundan aşağı doğru
                     drill.active = true;
-                    drill.size = 80.0f * scaleX;
                     drill.position = (Vector2){ player2.rect.x + player2.rect.width / 2.0f, player2.rect.y + player2.rect.height };
-                    drill.speed = 500.0f * scaleY; // Pozitif = aşağı
+                    drill.speed = 500.0f * scaleY;
                     drill.color = char2.themeColor;
                 }
                 else if (char2.skill == SKILL_STUN) {
-                    // Neru: Player 2 konumundan Player 1'e doğru (aşağı = pozitif Y)
                     neruCube.active = true;
-                    neruCube.size = 40.0f * scaleX;
-                    neruCube.rect = (Rectangle){ player2.rect.x + player2.rect.width / 2.0f - 20.0f * scaleX, player2.rect.y + player2.rect.height, neruCube.size, neruCube.size };
-                    neruCube.speed = 600.0f * scaleY; // Aşağı = pozitif
+                    neruCube.rect = (Rectangle){ player2.rect.x + player2.rect.width / 2.0f - 20.0f * scaleX, player2.rect.y + player2.rect.height, 40.0f * scaleX, 40.0f * scaleX };
+                    neruCube.speed = 600.0f * scaleY;
                     neruCube.color = char2.themeColor;
+                }
+                else if (char2.skill == SKILL_LASER) {
+                    PlaySound(bam); // Miku Lazer için eksik olan tetikleyici
                 }
             }
 
