@@ -7,15 +7,82 @@
 #include <math.h>
 
 #define BRICK_ROWS 8
-#define BRICK_COLS 14
+#define BRICK_COLS 15
 #define MAX_SCORES 5
 #define MAX_BALLS 10
 #define MAX_BALLS_PER_PLAYER 5
+#define MAX_POWERUPS 10
+
+// Harita Düzenleri
+const int mapData[5][BRICK_ROWS][BRICK_COLS] = {
+    // Harita 1: "Çapraz Çarpışma" (X Şekli)
+    {
+        {3, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 3},
+        {0, 2, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 2, 0},
+        {0, 0, 2, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2, 0, 0},
+        {0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0},
+        {0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0},
+        {0, 0, 2, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2, 0, 0},
+        {0, 2, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 2, 0},
+        {3, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 3}
+    },
+    // Harita 2: "Kale Duvarları" (Korunaklı yapı)
+    {
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {2, 0, 0, 0, 2, 0, 0, 3, 0, 0, 2, 0, 0, 0, 2},
+        {2, 0, 3, 0, 2, 0, 1, 1, 1, 0, 2, 0, 3, 0, 2},
+        {1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1},
+        {2, 0, 3, 0, 2, 0, 1, 1, 1, 0, 2, 0, 3, 0, 2},
+        {2, 0, 0, 0, 2, 0, 0, 3, 0, 0, 2, 0, 0, 0, 2},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
+    },
+    // Harita 3: "Satranç Tahtası" (Parçalı ve kaotik)
+    {
+        {1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 3},
+        {0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 3, 0},
+        {3, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1},
+        {0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0},
+        {0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0},
+        {3, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1},
+        {0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 3, 0},
+        {1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 3}
+    },
+    // Harita 4: "Elmas Madeni" (Merkez odaklı)
+    {
+        {0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 1, 1, 1, 3, 1, 1, 1, 0, 0, 0, 0},
+        {0, 0, 0, 0, 1, 1, 1, 3, 1, 1, 1, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0}
+    },
+    // Harita 5: "Sütunlar" (Dikey koridorlar)
+    {
+        {1, 2, 0, 1, 2, 0, 1, 3, 1, 0, 2, 1, 0, 2, 1},
+        {1, 2, 0, 1, 2, 0, 1, 3, 1, 0, 2, 1, 0, 2, 1},
+        {1, 2, 0, 1, 2, 0, 1, 3, 1, 0, 2, 1, 0, 2, 1},
+        {1, 2, 0, 1, 2, 0, 1, 3, 1, 0, 2, 1, 0, 2, 1},
+        {1, 2, 0, 1, 2, 0, 1, 3, 1, 0, 2, 1, 0, 2, 1},
+        {1, 2, 0, 1, 2, 0, 1, 3, 1, 0, 2, 1, 0, 2, 1},
+        {1, 2, 0, 1, 2, 0, 1, 3, 1, 0, 2, 1, 0, 2, 1},
+        {1, 2, 0, 1, 2, 0, 1, 3, 1, 0, 2, 1, 0, 2, 1}
+    }
+};
+
+typedef enum {
+    BRICK_NORMAL,
+    BRICK_GREEN,
+    BRICK_PURPLE
+} BrickType;
 
 typedef enum {
     STATE_MENU,
     STATE_CHOICE,
     STATE_CHARACTER,
+    STATE_MAP,
     STATE_HIGHSCORE,
     STATE_GAME,
     STATE_PAUSE,
@@ -33,7 +100,15 @@ typedef struct {
     Rectangle rect;
     bool active;  // true ise ekranda duruyor, false ise kırılmış
     Color color;
+    int type; // BrickType
 } Brick;
+
+typedef struct {
+    Vector2 position;
+    float speed;
+    bool active;
+    int targetPlayer; // 1 or 2
+} PowerUp;
 
 typedef struct {
     Vector2 position;
@@ -89,6 +164,7 @@ NeruCube neruCube = { 0 };
 int p1CharChoice = 1; // 1=Miku, 2=Teto, 3=Neru
 int p2CharChoice = 2;
 bool isP1Selecting = true; // Karakter seçiminde sıra kimin
+int selectedMap = 0; // 0-4 arası harita seçimi
 
 int score1 = 0;
 int score2 = 0;
@@ -97,6 +173,7 @@ Character char1;
 Character char2;
 
 Ball balls[MAX_BALLS];
+PowerUp powerUps[MAX_POWERUPS];
 Texture2D charactersTex;
 Texture2D neruPhoneTex;
 
@@ -157,9 +234,18 @@ int main(void)
 
     Texture2D mikuLaserTex = LoadTexture("MikuLaser.png");
     Texture2D menuBgTex = LoadTexture("menubackground.jpg");
-    Texture2D tetoDrillTex = LoadTexture("tetodrill.png");
+    // Skills transparency fix (Remove black background)
+    Image drillImg = LoadImage("tetodrill.png");
+    ImageColorReplace(&drillImg, BLACK, BLANK);
+    Texture2D tetoDrillTex = LoadTextureFromImage(drillImg);
+    UnloadImage(drillImg);
+
     charactersTex = LoadTexture("characters.png");
-    neruPhoneTex = LoadTexture("neruphone.png");
+
+    Image phoneImg = LoadImage("neruphone.png");
+    ImageColorReplace(&phoneImg, BLACK, BLANK);
+    neruPhoneTex = LoadTextureFromImage(phoneImg);
+    UnloadImage(phoneImg);
 
     neruCube.maxFrames = 4;
     neruCube.frameSpeed = 10.0f;
@@ -418,7 +504,6 @@ int main(void)
                 case 1: skillDesc = "Miku: Shoot a laser to gain points without breaking blocks!"; break;
                 case 2: skillDesc = "Teto: Send your drill to break blocks and stun enemies!"; break;
                 case 3: skillDesc = "Neru: Throw your phone and stun enemy no matter what!"; break;
-                default: skillDesc = "Bu skill sana oyunda yardim edecek!"; break;
             }
             int descSize = (int)(screenHeight * 0.030f);
             DrawText(skillDesc, screenWidth / 2 - MeasureText(skillDesc, descSize) / 2,
@@ -446,8 +531,9 @@ int main(void)
                         // Karakterleri ata
                         char1 = InitCharacter(p1CharChoice);
                         char2 = InitCharacter(p2CharChoice);
-                        // Oyunu başlat
-                        goto START_GAME;
+                        // Harita seçimine git
+                        currentScreen = STATE_MAP;
+                        selectedMap = 0;
                     }
                     else {
                         isP1Selecting = false;
@@ -458,8 +544,14 @@ int main(void)
                     // Her iki oyuncu da seçti
                     char1 = InitCharacter(p1CharChoice);
                     char2 = InitCharacter(p2CharChoice);
+                    currentScreen = STATE_MAP;
+                    selectedMap = 0;
+                }
+            }
+        }
+        break;
 
-                START_GAME:;
+        START_GAME:;
                     gameTimer = 120.0f;
                     drill.active = false;
                     drill.currentFrame = 0;
@@ -497,6 +589,8 @@ int main(void)
                         balls[i].active = false;
                         balls[i].radius = baseBallRadius * ((scaleX + scaleY) / 2.0f);
                     }
+                    // Power-up array temizle
+                    for (int i = 0; i < MAX_POWERUPS; i++) powerUps[i].active = false;
 
                     // Player 1 başlangıç topu
                     balls[0].active = true;
@@ -515,24 +609,91 @@ int main(void)
                     balls[1].arrowAngle = 270.0f;
                     balls[1].arrowRotationDir = 1.0f;
                     balls[1].speed = (Vector2){ 0, 0 };
+
                     for (int i = 0; i < BRICK_ROWS; i++) {
                         for (int j = 0; j < BRICK_COLS; j++) {
                             bricks[i][j].rect = (Rectangle){
-                                j * (baseScreenWidth / BRICK_COLS) * scaleX + (baseScreenWidth / BRICK_COLS * 0.05f) * scaleX,
-                                (baseScreenHeight * 0.35f + i * (baseScreenHeight / 25.0f)) * scaleY,
-                                (baseScreenWidth / BRICK_COLS * 0.9f) * scaleX,
-                                (baseScreenHeight / 30.0f) * scaleY
+                                j * (screenWidth / BRICK_COLS),
+                                (screenHeight * 0.35f + i * (screenHeight / 25.0f)),
+                                (screenWidth / BRICK_COLS * 0.95f),
+                                (screenHeight / 30.0f)
                             };
-                            if (j == 0 || j == BRICK_COLS - 1) {
+                            
+                            int val = mapData[selectedMap][i][j];
+                            if (val == 0) {
                                 bricks[i][j].active = false;
-                            }
-                            else {
+                            } else {
                                 bricks[i][j].active = true;
+                                bricks[i][j].type = (val == 1) ? BRICK_NORMAL : ((val == 2) ? BRICK_GREEN : BRICK_PURPLE);
+                                bricks[i][j].color = (val == 1) ? WHITE : ((val == 2) ? GREEN : PURPLE);
                             }
                         }
                     }
                     currentScreen = STATE_GAME;
+        break;
+
+        case STATE_MAP:
+        {
+            DrawTexturePro(menuBgTex,
+                (Rectangle) {
+                0, 0, menuBgTex.width, menuBgTex.height
+            },
+                (Rectangle) {
+                0, 0, screenWidth, screenHeight
+            },
+                (Vector2) {
+                0, 0
+            }, 0.0f, WHITE);
+
+            Rectangle mapBgBox = { screenWidth * 0.10f, screenHeight * 0.10f, screenWidth * 0.80f, screenHeight * 0.80f };
+            DrawRectangleRec(mapBgBox, (Color) { 0, 0, 0, 180 });
+
+            const char* mapTitle = "Select Your Arena";
+            DrawText(mapTitle, screenWidth * 0.5f - MeasureText(mapTitle, (int)(screenHeight * 0.045f)) / 2,
+                screenHeight * 0.15f, (int)(screenHeight * 0.045f), RAYWHITE);
+
+            // 5 Harita kutusu (2 satır: 3 + 2)
+            float boxW = screenWidth * 0.20f;
+            float boxH = screenHeight * 0.12f;
+            float startY = screenHeight * 0.30f;
+            float spacingX = screenWidth * 0.25f;
+            float spacingY = screenHeight * 0.20f;
+
+            const char* mapNames[5] = { "Cross Clash", "Castle Walls", "Chessboard", "Diamond Mine", "Pillars" };
+            Vector2 mouse = GetMousePosition();
+
+            for (int i = 0; i < 5; i++) {
+                float x, y;
+                if (i < 3) {
+                    x = screenWidth * 0.5f - spacingX + (i * spacingX) - boxW / 2.0f;
+                    y = startY;
+                } else {
+                    x = screenWidth * 0.5f - spacingX * 0.5f + ((i - 3) * spacingX) - boxW / 2.0f;
+                    y = startY + spacingY;
                 }
+
+                Rectangle box = { x, y, boxW, boxH };
+                Color boxColor = (selectedMap == i) ? YELLOW : DARKGRAY;
+                
+                DrawRectangleRec(box, (Color){ 50, 50, 50, 200 });
+                DrawRectangleLinesEx(box, (selectedMap == i ? 3 : 1), boxColor);
+                
+                // Harita ismi
+                int fontSize = (int)(screenHeight * 0.025f);
+                DrawText(mapNames[i], (int)(x + boxW / 2.0f - MeasureText(mapNames[i], fontSize) / 2),
+                    (int)(y + boxH / 2.0f - fontSize / 2), fontSize, RAYWHITE);
+
+                if (CheckCollisionPointRec(mouse, box)) {
+                    selectedMap = i;
+                    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) goto MAP_CONFIRMED;
+                }
+            }
+
+            if (IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_D)) selectedMap = (selectedMap + 1) % 5;
+            if (IsKeyPressed(KEY_LEFT) || IsKeyPressed(KEY_A)) selectedMap = (selectedMap + 4) % 5;
+            if (IsKeyPressed(KEY_ENTER)) {
+                MAP_CONFIRMED:
+                goto START_GAME;
             }
         }
         break;
@@ -1006,13 +1167,57 @@ int main(void)
                                 PlaySound(bam);
                                 balls[i].speed.y *= -1;
                                 bricks[r][c].active = false;
-                                if (balls[i].owner == 1) score1 += 10;
-                                else score2 += 10;
+                                
+                                int points = (bricks[r][c].type == BRICK_GREEN) ? 20 : 10;
+                                if (balls[i].owner == 1) score1 += points;
+                                else score2 += points;
+
+                                // Mor tuğla ise özel güç düşür
+                                if (bricks[r][c].type == BRICK_PURPLE) {
+                                    for (int p = 0; p < MAX_POWERUPS; p++) {
+                                        if (!powerUps[p].active) {
+                                            powerUps[p].active = true;
+                                            powerUps[p].position = (Vector2){ bricks[r][c].rect.x + bricks[r][c].rect.width / 2.0f, bricks[r][c].rect.y };
+                                            powerUps[p].targetPlayer = balls[i].owner;
+                                            powerUps[p].speed = (balls[i].owner == 1) ? 200.0f * scaleY : -200.0f * scaleY;
+                                            break;
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
                 }
                 DrawCircleV(balls[i].position, balls[i].radius, balls[i].color);
+            }
+
+            // --- POWER-UP LOGIC ---
+            for (int i = 0; i < MAX_POWERUPS; i++) {
+                if (powerUps[i].active) {
+                    powerUps[i].position.y += powerUps[i].speed * GetFrameTime();
+                    
+                    // Draw Power-up (Beyaz bir top)
+                    DrawCircleV(powerUps[i].position, 8.0f * scaleX, WHITE);
+                    DrawCircleLines((int)powerUps[i].position.x, (int)powerUps[i].position.y, 8.0f * scaleX, PURPLE);
+
+                    // Collection
+                    if (CheckCollisionCircleRec(powerUps[i].position, 8.0f * scaleX, player1.rect)) {
+                        powerUps[i].active = false;
+                        char1.currentCooldown = 0; // Skill ready
+                        char1.isSkillReady = true;
+                        PlaySound(bam);
+                    } else if (CheckCollisionCircleRec(powerUps[i].position, 8.0f * scaleX, player2.rect)) {
+                        powerUps[i].active = false;
+                        char2.currentCooldown = 0; // Skill ready
+                        char2.isSkillReady = true;
+                        PlaySound(bam);
+                    }
+
+                    // Screen limit
+                    if (powerUps[i].position.y < 0 || powerUps[i].position.y > screenHeight) {
+                        powerUps[i].active = false;
+                    }
+                }
             }
 
             // --- SPAWN LOGIC ---
