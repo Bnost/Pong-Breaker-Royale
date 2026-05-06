@@ -232,15 +232,23 @@ int main(void)
     InitAudioDevice();
     Sound bam = LoadSound("Pop.ogg");
 
-    Texture2D mikuLaserTex = LoadTexture("MikuLaser.png");
     Texture2D menuBgTex = LoadTexture("menubackground.jpg");
-    // Skills transparency fix (Remove black background)
+
+    // Skills and Characters transparency fix (Remove black background)
     Image drillImg = LoadImage("tetodrill.png");
     ImageColorReplace(&drillImg, BLACK, BLANK);
     Texture2D tetoDrillTex = LoadTextureFromImage(drillImg);
     UnloadImage(drillImg);
 
-    charactersTex = LoadTexture("characters.png");
+    Image laserImg = LoadImage("MikuLaser.png");
+    ImageColorReplace(&laserImg, BLACK, BLANK);
+    Texture2D mikuLaserTex = LoadTextureFromImage(laserImg);
+    UnloadImage(laserImg);
+
+    Image charImg = LoadImage("characters.png");
+    ImageColorReplace(&charImg, BLACK, BLANK);
+    charactersTex = LoadTextureFromImage(charImg);
+    UnloadImage(charImg);
 
     Image phoneImg = LoadImage("neruphone.png");
     ImageColorReplace(&phoneImg, BLACK, BLANK);
@@ -248,6 +256,7 @@ int main(void)
     UnloadImage(phoneImg);
 
     neruCube.maxFrames = 4;
+
     neruCube.frameSpeed = 10.0f;
 
     Music menuMusic = LoadMusicStream("triplebaksong.mp3");
