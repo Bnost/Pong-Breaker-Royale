@@ -17,22 +17,22 @@
 const int mapData[5][BRICK_ROWS][BRICK_COLS] = {
     // Harita 1: "Çapraz Çarpışma" (X Şekli)
     {
-        {3, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 3},
+        {3, 0, 0, 0, 4, 0, 0, 1, 0, 0, 4, 0, 0, 0, 3},
         {0, 2, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 2, 0},
-        {0, 0, 2, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2, 0, 0},
+        {0, 0, 2, 0, 0, 1, 0, 4, 0, 1, 0, 0, 2, 0, 0},
         {0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0},
         {0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0},
-        {0, 0, 2, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2, 0, 0},
+        {0, 0, 2, 0, 0, 1, 0, 4, 0, 1, 0, 0, 2, 0, 0},
         {0, 2, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 2, 0},
-        {3, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 3}
+        {3, 0, 0, 0, 4, 0, 0, 1, 0, 0, 4, 0, 0, 0, 3}
     },
     // Harita 2: "Kale Duvarları" (Korunaklı yapı)
     {
         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
         {2, 0, 0, 0, 2, 0, 0, 3, 0, 0, 2, 0, 0, 0, 2},
         {2, 0, 3, 0, 2, 0, 1, 1, 1, 0, 2, 0, 3, 0, 2},
-        {1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 4, 1, 4, 1, 4, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 4, 1, 4, 1, 4, 1, 1, 1, 1, 1},
         {2, 0, 3, 0, 2, 0, 1, 1, 1, 0, 2, 0, 3, 0, 2},
         {2, 0, 0, 0, 2, 0, 0, 3, 0, 0, 2, 0, 0, 0, 2},
         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
@@ -51,22 +51,22 @@ const int mapData[5][BRICK_ROWS][BRICK_COLS] = {
     // Harita 4: "Elmas Madeni" (Merkez odaklı)
     {
         {0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 1, 1, 1, 3, 1, 1, 1, 0, 0, 0, 0},
-        {0, 0, 0, 0, 1, 1, 1, 3, 1, 1, 1, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0}
+        {0, 0, 0, 4, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0},
+        {0, 0, 4, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0},
+        {0, 4, 0, 0, 1, 1, 1, 3, 1, 1, 1, 0, 0, 4, 0},
+        {4, 0, 0, 0, 1, 1, 1, 3, 1, 1, 1, 0, 4, 4, 4},
+        {0, 4, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 4, 0},
+        {0, 0, 4, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 4, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0}
     },
     // Harita 5: "Sütunlar" (Dikey koridorlar)
     {
         {1, 2, 0, 1, 2, 0, 1, 3, 1, 0, 2, 1, 0, 2, 1},
         {1, 2, 0, 1, 2, 0, 1, 3, 1, 0, 2, 1, 0, 2, 1},
-        {1, 2, 0, 1, 2, 0, 1, 3, 1, 0, 2, 1, 0, 2, 1},
-        {1, 2, 0, 1, 2, 0, 1, 3, 1, 0, 2, 1, 0, 2, 1},
-        {1, 2, 0, 1, 2, 0, 1, 3, 1, 0, 2, 1, 0, 2, 1},
-        {1, 2, 0, 1, 2, 0, 1, 3, 1, 0, 2, 1, 0, 2, 1},
+        {1, 3, 4, 3, 2, 0, 1, 3, 1, 0, 2, 3, 4, 3, 1},
+        {1, 4, 4, 4, 2, 0, 1, 3, 1, 0, 2, 4, 4, 4, 1},
+        {1, 3, 4, 3, 2, 0, 1, 3, 1, 0, 2, 3, 4, 3, 1},
+        {1, 2, 4, 1, 2, 0, 1, 3, 1, 0, 2, 1, 4, 2, 1},
         {1, 2, 0, 1, 2, 0, 1, 3, 1, 0, 2, 1, 0, 2, 1},
         {1, 2, 0, 1, 2, 0, 1, 3, 1, 0, 2, 1, 0, 2, 1}
     }
@@ -75,7 +75,8 @@ const int mapData[5][BRICK_ROWS][BRICK_COLS] = {
 typedef enum {
     BRICK_NORMAL,
     BRICK_GREEN,
-    BRICK_PURPLE
+    BRICK_PURPLE,
+    BRICK_OBSTACLE
 } BrickType;
 
 typedef enum {
@@ -90,9 +91,9 @@ typedef enum {
 } GameState;
 
 typedef enum {
-    PW_COOLDOWN,   
-    PW_POINTS,    
-    PW_EXTRA_BALL 
+    PW_COOLDOWN,
+    PW_POINTS,
+    PW_EXTRA_BALL
 } PowerUpType;
 
 typedef struct {
@@ -187,7 +188,7 @@ Texture2D neruPhoneTex;
 
 int main(void)
 {
-   
+
     float gameTimer = 120.0f; // 120 saniye = 2 dakika
 
     int screenWidth = 800;
@@ -633,8 +634,10 @@ int main(void)
                 }
                 else {
                     bricks[i][j].active = true;
-                    bricks[i][j].type = (val == 1) ? BRICK_NORMAL : ((val == 2) ? BRICK_GREEN : BRICK_PURPLE);
-                    bricks[i][j].color = (val == 1) ? WHITE : ((val == 2) ? GREEN : PURPLE);
+                    if (val == 1) { bricks[i][j].type = BRICK_NORMAL;   bricks[i][j].color = WHITE; }
+                    else if (val == 2) { bricks[i][j].type = BRICK_GREEN;    bricks[i][j].color = GREEN; }
+                    else if (val == 3) { bricks[i][j].type = BRICK_PURPLE;   bricks[i][j].color = PURPLE; }
+                    else if (val == 4) { bricks[i][j].type = BRICK_OBSTACLE; bricks[i][j].color = DARKGRAY; }
                 }
             }
         }
@@ -880,6 +883,13 @@ int main(void)
                 for (int j = 0; j < BRICK_COLS; j++) {
                     if (bricks[i][j].active) {
                         DrawRectangleRec(bricks[i][j].rect, bricks[i][j].color);
+                        if (bricks[i][j].type == BRICK_OBSTACLE) {
+                            // Steel cross-hatch pattern to signal "indestructible"
+                            DrawRectangleLinesEx(bricks[i][j].rect, 2, GRAY);
+                            DrawLine(bricks[i][j].rect.x, bricks[i][j].rect.y,
+                                bricks[i][j].rect.x + bricks[i][j].rect.width,
+                                bricks[i][j].rect.y + bricks[i][j].rect.height, GRAY);
+                        }
                     }
                 }
             }
@@ -947,7 +957,10 @@ int main(void)
                     bool hit = false;
                     for (int i = 0; i < BRICK_ROWS; i++)
                         for (int j = 0; j < BRICK_COLS; j++)
-                            if (bricks[i][j].active && CheckCollisionRecs(laser2Rect, bricks[i][j].rect)) { score2 += 10; hit = true; }
+                            if (bricks[i][j].active && CheckCollisionRecs(laserRect, bricks[i][j].rect)
+                                && bricks[i][j].type != BRICK_OBSTACLE) {
+                                score1 += 10; hit = true;
+                            }
                     if (hit) PlaySound(bam);
                     char2.skillTickTimer = 0.0f;
                 }
@@ -980,13 +993,14 @@ int main(void)
                 for (int i = 0; i < BRICK_ROWS; i++) {
                     for (int j = 0; j < BRICK_COLS; j++) {
                         if (bricks[i][j].active && CheckCollisionRecs(drillRect, bricks[i][j].rect)) {
+                            if (bricks[i][j].type == BRICK_OBSTACLE) {
+                                drill.active = false;  // Drill shatters on obstacle
+                                PlaySound(bam);
+                                break;
+                            }
                             bricks[i][j].active = false;
                             hitBrick = true;
-
-                            // Tuğla tipine göre puan belirle
                             int points = (bricks[i][j].type == BRICK_GREEN) ? 20 : 10;
-
-                            // Puanı matkabın sahibine ekle (1 ise Player 1, 2 ise Player 2)
                             if (drill.owner == 1) score1 += points;
                             else score2 += points;
                         }
@@ -1184,8 +1198,14 @@ int main(void)
                             // Aktif tuğla ile top çarpışıyor mu?
                             if (bricks[r][c].active && CheckCollisionCircleRec(balls[i].position, balls[i].radius, bricks[r][c].rect)) {
                                 PlaySound(bam);
-                                balls[i].speed.y *= -1; // Topu sektir
-                                bricks[r][c].active = false; // Tuğlayı kır
+                                balls[i].speed.y *= -1; //Topu sektir
+
+                                if (bricks[r][c].type == BRICK_OBSTACLE) {
+                                    // Bounce only — indestructible, no points, no power-up
+                                    continue;
+                                }
+
+                                bricks[r][c].active = false;    //Tuglayi kir
 
                                 // Puan hesaplama
                                 int points = (bricks[r][c].type == BRICK_GREEN) ? 20 : 10;
@@ -1218,111 +1238,111 @@ int main(void)
 
                 }
 
-                    DrawCircleV(balls[i].position, balls[i].radius, balls[i].color);
+                DrawCircleV(balls[i].position, balls[i].radius, balls[i].color);
+            }
+
+            // --- POWER-UP LOGIC ---
+            for (int i = 0; i < MAX_POWERUPS; i++) {
+                if (powerUps[i].active) {
+                    powerUps[i].position.y += powerUps[i].speed * GetFrameTime();
+
+                    // --- GÖRSELLEŞTİRME ---
+                    Color pwColor = WHITE;
+                    if (powerUps[i].type == PW_COOLDOWN) pwColor = PURPLE;
+                    else if (powerUps[i].type == PW_POINTS) pwColor = GOLD;
+                    else if (powerUps[i].type == PW_EXTRA_BALL) pwColor = SKYBLUE;
+
+                    DrawCircleV(powerUps[i].position, 10.0f * scaleX, pwColor);
+                    DrawCircleLines((int)powerUps[i].position.x, (int)powerUps[i].position.y, 10.0f * scaleX, BLACK);
+
+                    // --- TOPLAMA (COLLISION) ---
+                    Paddle* players[2] = { &player1, &player2 };
+                    int* scores[2] = { &score1, &score2 };
+                    Character* chars[2] = { &char1, &char2 };
+
+                    for (int pIdx = 0; pIdx < 2; pIdx++) {
+                        if (CheckCollisionCircleRec(powerUps[i].position, 10.0f * scaleX, players[pIdx]->rect)) {
+                            powerUps[i].active = false;
+                            PlaySound(bam);
+
+                            switch (powerUps[i].type) {
+                            case PW_COOLDOWN:
+                                chars[pIdx]->currentCooldown = 0;
+                                chars[pIdx]->isSkillReady = true;
+                                break;
+
+                            case PW_POINTS:
+                                *(scores[pIdx]) += 100; // +100 Puan ekle
+                                break;
+
+                            case PW_EXTRA_BALL:
+                                // Pasif bir top bul ve aktif et
+                                for (int b = 0; b < MAX_BALLS; b++) {
+                                    if (!balls[b].active) {
+                                        balls[b].active = true;
+                                        balls[b].owner = pIdx + 1;
+                                        balls[b].isMoving = false; // Rakete yapışık başlasın
+                                        balls[b].color = chars[pIdx]->themeColor;
+                                        balls[b].arrowAngle = (pIdx == 0) ? 90.0f : 270.0f;
+                                        balls[b].arrowRotationDir = 1.0f;
+                                        balls[b].radius = baseBallRadius * ((scaleX + scaleY) / 2.0f);
+                                        break;
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                    }
+
+                    // Ekran sınırı kontrolü
+                    if (powerUps[i].position.y < 0 || powerUps[i].position.y > screenHeight) {
+                        powerUps[i].active = false;
+                    }
                 }
+            }
 
-                            // --- POWER-UP LOGIC ---
-                            for (int i = 0; i < MAX_POWERUPS; i++) {
-                                if (powerUps[i].active) {
-                                    powerUps[i].position.y += powerUps[i].speed * GetFrameTime();
+            // --- SPAWN LOGIC ---
+            if (p1BallCount == 0) {
+                for (int i = 0; i < MAX_BALLS; i++) {
+                    if (!balls[i].active) {
+                        balls[i].active = true;
+                        balls[i].owner = 1;
+                        balls[i].isMoving = false;
+                        balls[i].color = char1.themeColor;
+                        balls[i].arrowAngle = 90.0f;
+                        balls[i].arrowRotationDir = 1.0f;
+                        balls[i].speed = (Vector2){ 0,0 };
+                        break;
+                    }
+                }
+            }
+            if (p2BallCount == 0) {
+                for (int i = 0; i < MAX_BALLS; i++) {
+                    if (!balls[i].active) {
+                        balls[i].active = true;
+                        balls[i].owner = 2;
+                        balls[i].isMoving = false;
+                        balls[i].color = char2.themeColor;
+                        balls[i].arrowAngle = 270.0f;
+                        balls[i].arrowRotationDir = 1.0f;
+                        balls[i].speed = (Vector2){ 0,0 };
+                        break;
+                    }
+                }
+            }
 
-                                    // --- GÖRSELLEŞTİRME ---
-                                    Color pwColor = WHITE;
-                                    if (powerUps[i].type == PW_COOLDOWN) pwColor = PURPLE;
-                                    else if (powerUps[i].type == PW_POINTS) pwColor = GOLD;
-                                    else if (powerUps[i].type == PW_EXTRA_BALL) pwColor = SKYBLUE;
+            pauseButton = (Rectangle){ screenWidth - 50 * scaleX, 10 * scaleY, 40 * scaleX, 40 * scaleY };
 
-                                    DrawCircleV(powerUps[i].position, 10.0f * scaleX, pwColor);
-                                    DrawCircleLines((int)powerUps[i].position.x, (int)powerUps[i].position.y, 10.0f * scaleX, BLACK);
+            // Butonu Çiz
+            DrawRectangleRec(pauseButton, (Color) { 0, 0, 0, 100 });
+            DrawText("||", pauseButton.x + 12 * scaleX, pauseButton.y + 5 * scaleY, 30 * scaleY, RAYWHITE);
 
-                                    // --- TOPLAMA (COLLISION) ---
-                                    Paddle* players[2] = { &player1, &player2 };
-                                    int* scores[2] = { &score1, &score2 };
-                                    Character* chars[2] = { &char1, &char2 };
+            // Tıklama veya ESC Kontrolü
+            if (IsKeyPressed(KEY_ESCAPE) || (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(GetMousePosition(), pauseButton))) {
+                currentScreen = STATE_PAUSE;
+            }
 
-                                    for (int pIdx = 0; pIdx < 2; pIdx++) {
-                                        if (CheckCollisionCircleRec(powerUps[i].position, 10.0f * scaleX, players[pIdx]->rect)) {
-                                            powerUps[i].active = false;
-                                            PlaySound(bam);
-
-                                            switch (powerUps[i].type) {
-                                            case PW_COOLDOWN:
-                                                chars[pIdx]->currentCooldown = 0;
-                                                chars[pIdx]->isSkillReady = true;
-                                                break;
-
-                                            case PW_POINTS:
-                                                *(scores[pIdx]) += 100; // +100 Puan ekle
-                                                break;
-
-                                            case PW_EXTRA_BALL:
-                                                // Pasif bir top bul ve aktif et
-                                                for (int b = 0; b < MAX_BALLS; b++) {
-                                                    if (!balls[b].active) {
-                                                        balls[b].active = true;
-                                                        balls[b].owner = pIdx + 1;
-                                                        balls[b].isMoving = false; // Rakete yapışık başlasın
-                                                        balls[b].color = chars[pIdx]->themeColor;
-                                                        balls[b].arrowAngle = (pIdx == 0) ? 90.0f : 270.0f;
-                                                        balls[b].arrowRotationDir = 1.0f;
-                                                        balls[b].radius = baseBallRadius * ((scaleX + scaleY) / 2.0f);
-                                                        break;
-                                                    }
-                                                }
-                                                break;
-                                            }
-                                        }
-                                    }
-
-                                    // Ekran sınırı kontrolü
-                                    if (powerUps[i].position.y < 0 || powerUps[i].position.y > screenHeight) {
-                                        powerUps[i].active = false;
-                                    }
-                                }
-                            }
-
-                            // --- SPAWN LOGIC ---
-                            if (p1BallCount == 0) {
-                                for (int i = 0; i < MAX_BALLS; i++) {
-                                    if (!balls[i].active) {
-                                        balls[i].active = true;
-                                        balls[i].owner = 1;
-                                        balls[i].isMoving = false;
-                                        balls[i].color = char1.themeColor;
-                                        balls[i].arrowAngle = 90.0f;
-                                        balls[i].arrowRotationDir = 1.0f;
-                                        balls[i].speed = (Vector2){ 0,0 };
-                                        break;
-                                    }
-                                }
-                            }
-                            if (p2BallCount == 0) {
-                                for (int i = 0; i < MAX_BALLS; i++) {
-                                    if (!balls[i].active) {
-                                        balls[i].active = true;
-                                        balls[i].owner = 2;
-                                        balls[i].isMoving = false;
-                                        balls[i].color = char2.themeColor;
-                                        balls[i].arrowAngle = 270.0f;
-                                        balls[i].arrowRotationDir = 1.0f;
-                                        balls[i].speed = (Vector2){ 0,0 };
-                                        break;
-                                    }
-                                }
-                            }
-
-                            pauseButton = (Rectangle){ screenWidth - 50 * scaleX, 10 * scaleY, 40 * scaleX, 40 * scaleY };
-
-                            // Butonu Çiz
-                            DrawRectangleRec(pauseButton, (Color) { 0, 0, 0, 100 });
-                            DrawText("||", pauseButton.x + 12 * scaleX, pauseButton.y + 5 * scaleY, 30 * scaleY, RAYWHITE);
-
-                            // Tıklama veya ESC Kontrolü
-                            if (IsKeyPressed(KEY_ESCAPE) || (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(GetMousePosition(), pauseButton))) {
-                                currentScreen = STATE_PAUSE;
-                            }
-
-                            break;
+            break;
 
         case STATE_PAUSE:
         {
@@ -1425,36 +1445,36 @@ int main(void)
         }
         break;
 
-                        }
+        }
 
-                        // Diğer ekranlarda (Karakter seçimi, Skorlar vb.) ESC'ye basınca menüye döner
-                        if (IsKeyPressed(KEY_ESCAPE)) {
-                            if (currentScreen == STATE_CHOICE || currentScreen == STATE_CHARACTER || currentScreen == STATE_HIGHSCORE) {
-                                currentScreen = STATE_MENU;
-                            }
-                        }
+        // Diğer ekranlarda (Karakter seçimi, Skorlar vb.) ESC'ye basınca menüye döner
+        if (IsKeyPressed(KEY_ESCAPE)) {
+            if (currentScreen == STATE_CHOICE || currentScreen == STATE_CHARACTER || currentScreen == STATE_HIGHSCORE) {
+                currentScreen = STATE_MENU;
+            }
+        }
 
-                        EndDrawing();
-                    }
+        EndDrawing();
+    }
 
-                    // Uygulama kapanırken de skoru kaydedelim ki ani kapanışlarda kaybolmasın (eğer oyundaysa)
-                    if (currentScreen == STATE_GAME) {
-                        if (score1 >= score2) SaveScore("Player 1", score1);
-                        else SaveScore("Player 2", score2);
-                    }
+    // Uygulama kapanırken de skoru kaydedelim ki ani kapanışlarda kaybolmasın (eğer oyundaysa)
+    if (currentScreen == STATE_GAME) {
+        if (score1 >= score2) SaveScore("Player 1", score1);
+        else SaveScore("Player 2", score2);
+    }
 
-                    UnloadSound(bam);
-                    UnloadTexture(mikuLaserTex);
-                    UnloadTexture(menuBgTex);
-                    UnloadTexture(tetoDrillTex);
-                    UnloadTexture(charactersTex);
-                    UnloadTexture(neruPhoneTex);
-                    UnloadMusicStream(menuMusic);
-                    CloseAudioDevice();
-                    CloseWindow();
+    UnloadSound(bam);
+    UnloadTexture(mikuLaserTex);
+    UnloadTexture(menuBgTex);
+    UnloadTexture(tetoDrillTex);
+    UnloadTexture(charactersTex);
+    UnloadTexture(neruPhoneTex);
+    UnloadMusicStream(menuMusic);
+    CloseAudioDevice();
+    CloseWindow();
 
-                    return 0;
-                }
+    return 0;
+}
 
 
 void LoadScores() {
