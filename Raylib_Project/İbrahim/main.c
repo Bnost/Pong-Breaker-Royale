@@ -256,8 +256,10 @@ int main(void)
     UnloadImage(phoneImg);
 
     neruCube.maxFrames = 4;
-
     neruCube.frameSpeed = 10.0f;
+
+    drill.maxFrames = 4;
+    drill.frameSpeed = 10.0f;
 
     Music menuMusic = LoadMusicStream("triplebaksong.mp3");
     PlayMusicStream(menuMusic);
@@ -704,6 +706,14 @@ int main(void)
                 MAP_CONFIRMED:
                 goto START_GAME;
             }
+
+            // Bottom hint text
+            const char* hintText = "Click or press ENTER to confirm  |  A / D or Arrow Keys to navigate";
+            int hintFontSize = (int)(screenHeight * 0.022f);
+            DrawText(hintText,
+                screenWidth / 2 - MeasureText(hintText, hintFontSize) / 2,
+                (int)(screenHeight * 0.87f),
+                hintFontSize, LIGHTGRAY);
         }
         break;
 
@@ -970,8 +980,8 @@ int main(void)
                 Rectangle destRec = drillRect;
                 Vector2 origin = { 0.0f, 0.0f };
 
-                // BLEND_ADDITIVE yerine BLEND_ALPHA kullanarak daha net görünmesini sağlıyoruz
-                BeginBlendMode(BLEND_ALPHA);
+                // BLEND_ADDITIVE: black pixels become invisible, glow/sparks add naturally to the scene
+                BeginBlendMode(BLEND_ADDITIVE);
                 DrawTexturePro(tetoDrillTex, sourceRec, destRec, origin, 0.0f, WHITE);
                 EndBlendMode();
 
@@ -1039,7 +1049,8 @@ int main(void)
                 float frameWidth = (float)neruPhoneTex.width / neruCube.maxFrames;
                 Rectangle sourceRec = { neruCube.currentFrame * frameWidth, 0, frameWidth, (float)neruPhoneTex.height };
                 
-                BeginBlendMode(BLEND_ALPHA);
+                // BLEND_ADDITIVE: black pixels become invisible, glow/sparks add naturally to the scene
+                BeginBlendMode(BLEND_ADDITIVE);
                 DrawTexturePro(neruPhoneTex, sourceRec, neruCube.rect, (Vector2){0, 0}, 0.0f, WHITE);
                 EndBlendMode();
 
