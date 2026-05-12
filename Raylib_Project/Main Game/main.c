@@ -247,6 +247,7 @@ int main(void)
     Sound bam = LoadSound("Pop.ogg");
 
     Texture2D mikuLaserTex = LoadTexture("MikuLaser.png");
+    Texture2D paddleHairTex = LoadTexture("MkuPaddleHair.png");
     Texture2D menuBgTex = LoadTexture("menubackground.jpg");
     // Skills transparency fix: trim near-black pixels with threshold
     Image drillImg = LoadImage("tetodrill.png");
@@ -523,15 +524,9 @@ int main(void)
             for (int i = 0; i < 3; i++) {
                 Rectangle boxRect = { startX + i * spacing - boxSize / 2.0f, boxY, boxSize, boxSize };
 
-                // Draw character sprite. For P2, flip vertically so animation isn't mirrored.
+                // Draw character sprite normally for both players.
                 float srcH = (float)charactersTex.height;
-                Rectangle sourceRec;
-                if (!isP1Selecting) {
-                    // Negative height flips the sprite vertically for P2 side
-                    sourceRec = (Rectangle){ spriteIndexMap[i] * charSpriteWidth, srcH, charSpriteWidth, -srcH };
-                } else {
-                    sourceRec = (Rectangle){ spriteIndexMap[i] * charSpriteWidth, 0, charSpriteWidth, srcH };
-                }
+                Rectangle sourceRec = (Rectangle){ spriteIndexMap[i] * charSpriteWidth, 0, charSpriteWidth, srcH };
                 DrawTexturePro(charactersTex, sourceRec, boxRect, (Vector2) { 0, 0 }, 0.0f, WHITE);
 
                 // Mouse hover
@@ -541,7 +536,7 @@ int main(void)
 
                 // Seçili çerçeve
                 if (*currentSel == i + 1) {
-                    DrawRectangleLinesEx(boxRect, 3, WHITE);
+                    DrawRectangleLinesEx(boxRect, 8, WHITE);
                 }
 
                 // İsim
@@ -962,8 +957,41 @@ int main(void)
                 }
             }
 
+            if (p1CharChoice == 1) BeginBlendMode(BLEND_ADDITIVE);
+            if (p1CharChoice == 1) {
+                float hairSrcW = paddleHairTex.width / 2.0f;
+                float hairSrcH = paddleHairTex.height;
+                float hairDestW = hairSrcW * scaleX;
+                Rectangle leftHairRect = { player1.rect.x - hairDestW, player1.rect.y, hairDestW, player1.rect.height };
+                DrawTexturePro(paddleHairTex, (Rectangle){0, 0, hairSrcW, hairSrcH}, leftHairRect, (Vector2){0, 0}, 0.0f, WHITE);
+            }
             DrawRectangleRec(player1.rect, player1.color);
+            if (p1CharChoice == 1) {
+                float hairSrcW = paddleHairTex.width / 2.0f;
+                float hairSrcH = paddleHairTex.height;
+                float hairDestW = hairSrcW * scaleX;
+                Rectangle rightHairRect = { player1.rect.x + player1.rect.width, player1.rect.y, hairDestW, player1.rect.height };
+                DrawTexturePro(paddleHairTex, (Rectangle){hairSrcW, 0, hairSrcW, hairSrcH}, rightHairRect, (Vector2){0, 0}, 0.0f, WHITE);
+            }
+            if (p1CharChoice == 1) EndBlendMode();
+
+            if (p2CharChoice == 1) BeginBlendMode(BLEND_ADDITIVE);
+            if (p2CharChoice == 1) {
+                float hairSrcW = paddleHairTex.width / 2.0f;
+                float hairSrcH = paddleHairTex.height;
+                float hairDestW = hairSrcW * scaleX;
+                Rectangle leftHairRect = { player2.rect.x - hairDestW, player2.rect.y, hairDestW, player2.rect.height };
+                DrawTexturePro(paddleHairTex, (Rectangle){0, 0, hairSrcW, hairSrcH}, leftHairRect, (Vector2){0, 0}, 0.0f, WHITE);
+            }
             DrawRectangleRec(player2.rect, player2.color);
+            if (p2CharChoice == 1) {
+                float hairSrcW = paddleHairTex.width / 2.0f;
+                float hairSrcH = paddleHairTex.height;
+                float hairDestW = hairSrcW * scaleX;
+                Rectangle rightHairRect = { player2.rect.x + player2.rect.width, player2.rect.y, hairDestW, player2.rect.height };
+                DrawTexturePro(paddleHairTex, (Rectangle){hairSrcW, 0, hairSrcW, hairSrcH}, rightHairRect, (Vector2){0, 0}, 0.0f, WHITE);
+            }
+            if (p2CharChoice == 1) EndBlendMode();
             for (int i = 0; i < BRICK_ROWS; i++) {
                 for (int j = 0; j < BRICK_COLS; j++) {
                     if (bricks[i][j].active) {
@@ -1571,6 +1599,7 @@ int main(void)
 
     UnloadSound(bam);
     UnloadTexture(mikuLaserTex);
+    UnloadTexture(paddleHairTex);
     UnloadTexture(menuBgTex);
     UnloadTexture(tetoDrillTex);
     UnloadTexture(charactersTex);
