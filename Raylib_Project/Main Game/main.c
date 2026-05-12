@@ -190,6 +190,7 @@ Texture2D neruPhoneTex;
 int main(void)
 {
 
+
     char nameInput[16] = "\0";
     int letterCount = 0;
     int winnerScore = 0; // Kazananın skorunu burada tutacağız
@@ -283,11 +284,13 @@ int main(void)
 
     LoadScores();
 
+    int leftcount = 0;
+    int rightcount = 0;   // botu sadece sağa veya sola hareket errirmek için     
     SetTargetFPS(60);
     srand(time(NULL));
 
     while (!WindowShouldClose())
-    {
+    {  
         SetExitKey(KEY_NULL);
 
         // F11 ile tam ekran geçişi
@@ -938,17 +941,19 @@ int main(void)
                         int c = screenWidth / 4;
                         double velocity;
 
-                        if (player2.rect.x + player2.rect.width / 2.0f < targetX && k != 10) {
+                        if (rightcount > 0 || leftcount == 0 && player2.rect.x + player2.rect.width / 2.0f < targetX && k != 10) {
                             velocity = (r != 1) ? 1.0 : 0.4;
                             player2.rect.x += player2.speed * GetFrameTime() * velocity;
+                            rightcount++;
                         }
-                        else if (player2.rect.x + player2.rect.width / 2.0f > targetX && k != 10) {
+                        else if (leftcount > 0 || rightcount == 0 && player2.rect.x + player2.rect.width / 2.0f > targetX && k != 10) {
                             velocity = (r != 1) ? 1.0 : 0.4;
                             player2.rect.x -= player2.speed * GetFrameTime() * velocity;
+                              leftcount++;
                         }
                     }
-                    if (player2.rect.x < 0) player2.rect.x = 0;
-                    if (player2.rect.x > screenWidth - player2.rect.width) player2.rect.x = screenWidth - player2.rect.width;
+                    if (player2.rect.x < 0) player2.rect.x = 0;    leftcount = 0; rightcount = 1;
+                    if (player2.rect.x > screenWidth - player2.rect.width) player2.rect.x = screenWidth - player2.rect.width; leftcount = 0; rightcount = 1; // botun haritadan kaymaması için
                 }
                 else {
                     if (IsKeyDown(KEY_D) && player2.rect.x < screenWidth - player2.rect.width) {
