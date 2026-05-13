@@ -15,29 +15,7 @@
 
 // Harita Düzenleri
 const int mapData[5][BRICK_ROWS][BRICK_COLS] = {
-    // Harita 1: "Çapraz Çarpışma" (X Şekli)
-    {
-        {3, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 3},
-        {0, 2, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 2, 0},
-        {0, 0, 2, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2, 0, 0},
-        {0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0},
-        {0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0},
-        {0, 0, 2, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2, 0, 0},
-        {0, 2, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 2, 0},
-        {3, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 3}
-    },
-    // Harita 2: "Kale Duvarları" (Korunaklı yapı)
-    {
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {2, 0, 0, 0, 2, 0, 0, 3, 0, 0, 2, 0, 0, 0, 2},
-        {2, 0, 3, 0, 2, 0, 1, 1, 1, 0, 2, 0, 3, 0, 2},
-        {1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1},
-        {2, 0, 3, 0, 2, 0, 1, 1, 1, 0, 2, 0, 3, 0, 2},
-        {2, 0, 0, 0, 2, 0, 0, 3, 0, 0, 2, 0, 0, 0, 2},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
-    },
-    // Harita 3: "Satranç Tahtası" (Parçalı ve kaotik)
+    // Harita 1: "Satranç Tahtası" (Parçalı ve kaotik)
     {
         {1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 3},
         {0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 3, 0},
@@ -48,25 +26,47 @@ const int mapData[5][BRICK_ROWS][BRICK_COLS] = {
         {0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 3, 0},
         {1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 3}
     },
+    // Harita 2: "Kale Duvarları" (Korunaklı yapı)
+    {
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {2, 0, 0, 0, 2, 0, 0, 3, 0, 0, 2, 0, 0, 0, 2},
+        {2, 0, 3, 0, 2, 0, 1, 1, 1, 0, 2, 0, 3, 0, 2},
+        {1, 1, 1, 1, 1, 4, 1, 4, 1, 4, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 4, 1, 4, 1, 4, 1, 1, 1, 1, 1},
+        {2, 0, 3, 0, 2, 0, 1, 1, 1, 0, 2, 0, 3, 0, 2},
+        {2, 0, 0, 0, 2, 0, 0, 3, 0, 0, 2, 0, 0, 0, 2},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
+    },
+    // Harita 3: "Çapraz Çarpışma" (X Şekli)
+    {
+        {3, 0, 0, 0, 4, 0, 0, 1, 0, 0, 4, 0, 0, 0, 3},
+        {0, 2, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 2, 0},
+        {0, 0, 2, 0, 0, 1, 0, 4, 0, 1, 0, 0, 2, 0, 0},
+        {0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0},
+        {0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0},
+        {0, 0, 2, 0, 0, 1, 0, 4, 0, 1, 0, 0, 2, 0, 0},
+        {0, 2, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 2, 0},
+        {3, 0, 0, 0, 4, 0, 0, 1, 0, 0, 4, 0, 0, 0, 3}
+    },
     // Harita 4: "Elmas Madeni" (Merkez odaklı)
     {
         {0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 1, 1, 1, 3, 1, 1, 1, 0, 0, 0, 0},
-        {0, 0, 0, 0, 1, 1, 1, 3, 1, 1, 1, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0}
+        {0, 0, 0, 4, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0},
+        {0, 0, 4, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0},
+        {0, 4, 0, 0, 1, 1, 1, 3, 1, 1, 1, 0, 0, 4, 0},
+        {4, 0, 0, 0, 1, 1, 1, 3, 1, 1, 1, 0, 4, 4, 4},
+        {0, 4, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 4, 0},
+        {0, 0, 4, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 4, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0}
     },
     // Harita 5: "Sütunlar" (Dikey koridorlar)
     {
         {1, 2, 0, 1, 2, 0, 1, 3, 1, 0, 2, 1, 0, 2, 1},
         {1, 2, 0, 1, 2, 0, 1, 3, 1, 0, 2, 1, 0, 2, 1},
-        {1, 2, 0, 1, 2, 0, 1, 3, 1, 0, 2, 1, 0, 2, 1},
-        {1, 2, 0, 1, 2, 0, 1, 3, 1, 0, 2, 1, 0, 2, 1},
-        {1, 2, 0, 1, 2, 0, 1, 3, 1, 0, 2, 1, 0, 2, 1},
-        {1, 2, 0, 1, 2, 0, 1, 3, 1, 0, 2, 1, 0, 2, 1},
+        {1, 3, 4, 3, 2, 0, 1, 3, 1, 0, 2, 3, 4, 3, 1},
+        {1, 4, 4, 4, 2, 0, 1, 3, 1, 0, 2, 4, 4, 4, 1},
+        {1, 3, 4, 3, 2, 0, 1, 3, 1, 0, 2, 3, 4, 3, 1},
+        {1, 2, 4, 1, 2, 0, 1, 3, 1, 0, 2, 1, 4, 2, 1},
         {1, 2, 0, 1, 2, 0, 1, 3, 1, 0, 2, 1, 0, 2, 1},
         {1, 2, 0, 1, 2, 0, 1, 3, 1, 0, 2, 1, 0, 2, 1}
     }
@@ -75,7 +75,8 @@ const int mapData[5][BRICK_ROWS][BRICK_COLS] = {
 typedef enum {
     BRICK_NORMAL,
     BRICK_GREEN,
-    BRICK_PURPLE
+    BRICK_PURPLE,
+    BRICK_OBSTACLE
 } BrickType;
 
 typedef enum {
@@ -87,13 +88,31 @@ typedef enum {
     STATE_GAME,
     STATE_PAUSE,
     STATE_GAMEOVER,
+    STATE_INPUT_NAME
 } GameState;
+
+typedef enum {
+    PW_COOLDOWN,
+    PW_POINTS,
+    PW_EXTRA_BALL
+} PowerUpType;
+
+typedef struct {
+    Rectangle rect;
+    float speed;
+    float leftLimit;  // Gidebileceği en sol
+    float rightLimit; // Gidebileceği en sağ
+    bool active;
+} MovingObstacle;
+MovingObstacle movers[2]; // Her harita için 2 adet hareketli engel
 
 typedef struct {
     Rectangle rect;
     float speed;
     Color color;
     float stunTimer;
+    int stunCurrentFrame;
+    float stunFrameTimer;
 } Paddle;
 
 typedef struct {
@@ -101,6 +120,7 @@ typedef struct {
     bool active;  // true ise ekranda duruyor, false ise kırılmış
     Color color;
     int type; // BrickType
+    int health;
 } Brick;
 
 typedef struct {
@@ -108,6 +128,7 @@ typedef struct {
     float speed;
     bool active;
     int targetPlayer; // 1 or 2
+    PowerUpType type;
 } PowerUp;
 
 typedef struct {
@@ -142,6 +163,7 @@ typedef struct {
     int maxFrames;
     float frameTimer;
     float frameSpeed;
+    int owner;
 } DrillProjectile;
 
 DrillProjectile drill = { 0 };
@@ -176,10 +198,19 @@ Ball balls[MAX_BALLS];
 PowerUp powerUps[MAX_POWERUPS];
 Texture2D charactersTex;
 Texture2D neruPhoneTex;
+Texture2D stunEffectTex;
+int stunCols = 3;
+int stunRows = 2;
+int stunMaxFrames = 6;
+float stunFrameSpeed = 12.0f;
 
 int main(void)
 {
-   
+
+    char nameInput[16] = "\0";
+    int letterCount = 0;
+    int winnerScore = 0; // Kazananın skorunu burada tutacağız
+
     float gameTimer = 120.0f; // 120 saniye = 2 dakika
 
     int screenWidth = 800;
@@ -231,35 +262,45 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "Raylib - Pong Breaker Royale");
     InitAudioDevice();
     Sound bam = LoadSound("Pop.ogg");
+    Sound mikuSkillSound  = LoadSound("mikuskillsound.wav");
+    Sound tetoSkillSound  = LoadSound("tetoskillsond.mp3");
+    Sound neruSkillSound  = LoadSound("neruskillsound.wav");
 
+    Texture2D mikuLaserTex = LoadTexture("MikuLaser.png");
+    Texture2D paddleHairTex = LoadTexture("MkuPaddleHair.png");
     Texture2D menuBgTex = LoadTexture("menubackground.jpg");
-
-    // Skills and Characters transparency fix (Remove black background)
+    Texture2D pauseBgTex = LoadTexture("pausebackground.png");
+    Texture2D scoreBgTex = LoadTexture("scorebackground.png");
+    stunEffectTex = LoadTexture("stuneffect.png");
+    // Skills transparency fix: trim near-black pixels with threshold
     Image drillImg = LoadImage("tetodrill.png");
     ImageColorReplace(&drillImg, BLACK, BLANK);
+    // Also clear very dark pixels (near-black threshold)
+    Color *drillPixels = LoadImageColors(drillImg);
+    for (int px = 0; px < drillImg.width * drillImg.height; px++) {
+        if (drillPixels[px].r < 30 && drillPixels[px].g < 30 && drillPixels[px].b < 30)
+            ImageDrawPixel(&drillImg, px % drillImg.width, px / drillImg.width, BLANK);
+    }
+    UnloadImageColors(drillPixels);
     Texture2D tetoDrillTex = LoadTextureFromImage(drillImg);
     UnloadImage(drillImg);
 
-    Image laserImg = LoadImage("MikuLaser.png");
-    ImageColorReplace(&laserImg, BLACK, BLANK);
-    Texture2D mikuLaserTex = LoadTextureFromImage(laserImg);
-    UnloadImage(laserImg);
-
-    Image charImg = LoadImage("characters.png");
-    ImageColorReplace(&charImg, BLACK, BLANK);
-    charactersTex = LoadTextureFromImage(charImg);
-    UnloadImage(charImg);
+    charactersTex = LoadTexture("characters.png");
 
     Image phoneImg = LoadImage("neruphone.png");
     ImageColorReplace(&phoneImg, BLACK, BLANK);
+    // Also clear very dark pixels (near-black threshold)
+    Color *phonePixels = LoadImageColors(phoneImg);
+    for (int px = 0; px < phoneImg.width * phoneImg.height; px++) {
+        if (phonePixels[px].r < 30 && phonePixels[px].g < 30 && phonePixels[px].b < 30)
+            ImageDrawPixel(&phoneImg, px % phoneImg.width, px / phoneImg.width, BLANK);
+    }
+    UnloadImageColors(phonePixels);
     neruPhoneTex = LoadTextureFromImage(phoneImg);
     UnloadImage(phoneImg);
 
     neruCube.maxFrames = 4;
     neruCube.frameSpeed = 10.0f;
-
-    drill.maxFrames = 4;
-    drill.frameSpeed = 10.0f;
 
     Music menuMusic = LoadMusicStream("triplebaksong.mp3");
     PlayMusicStream(menuMusic);
@@ -297,30 +338,47 @@ int main(void)
         // Eğer ekran boyutu değiştiyse oyun durumunda nesneleri yeniden ölçekle
         static int lastScreenWidth = 800, lastScreenHeight = 450;
         if ((screenWidth != lastScreenWidth || screenHeight != lastScreenHeight) && currentScreen == STATE_GAME) {
+
+            // 1. Ölçekleri ve ortak ölçeği (uniformScale) güncelle
+            scaleX = (float)screenWidth / baseScreenWidth;
+            scaleY = (float)screenHeight / baseScreenHeight;
+            float uniformScale = (scaleX + scaleY) / 2.0f; // Ok ve top yarıçapı için en sağlıklısı
+
+            // 2. Raketleri Güncelle (Base değerlerden sıfırdan hesapla)
             player1.rect.width = basePaddleWidth * scaleX;
             player1.rect.height = basePaddleHeight * scaleY;
-            player1.rect.x = (player1.rect.x / prevScreenWidth) * screenWidth;
-            player1.rect.y = (player1.rect.y / prevScreenHeight) * screenHeight;
             player1.speed = basePaddleSpeed * scaleX;
+            // Raketi ekranın alt/üst oranına göre tam yerleştir (Kaymayı önler)
+            player1.rect.y = (baseScreenHeight / 2.0f + 150.0f) * scaleY;
+            player1.rect.x = (player1.rect.x / prevScreenWidth) * screenWidth; // Mevcut yatay konumu koru
 
             player2.rect.width = basePaddleWidth * scaleX;
             player2.rect.height = basePaddleHeight * scaleY;
-            player2.rect.x = (player2.rect.x / prevScreenWidth) * screenWidth;
-            player2.rect.y = (player2.rect.y / prevScreenHeight) * screenHeight;
             player2.speed = basePaddleSpeed * scaleX;
+            player2.rect.y = (baseScreenHeight / 2.0f - 170.0f) * scaleY;
+            player2.rect.x = (player2.rect.x / prevScreenWidth) * screenWidth;
 
-            // Topun pozisyonunu ve hızını orantıla
+            // 3. Topları Güncelle
             for (int i = 0; i < MAX_BALLS; i++) {
                 if (balls[i].active) {
+                    // Yarıçapı uniformScale ile güncelle (Ok ile uyumlu olur)
+                    balls[i].radius = baseBallRadius * uniformScale;
+
+                    // Pozisyonu yeni ekrana oranla
                     balls[i].position.x = (balls[i].position.x / prevScreenWidth) * screenWidth;
                     balls[i].position.y = (balls[i].position.y / prevScreenHeight) * screenHeight;
-                    balls[i].radius = baseBallRadius * ((scaleX + scaleY) / 2.0f);
-                    balls[i].speed.x = (balls[i].speed.x > 0 ? 1 : -1) * baseBallSpeed * scaleX;
-                    balls[i].speed.y = (balls[i].speed.y > 0 ? 1 : -1) * baseBallSpeed * scaleY;
+
+                    // Hız vektörlerini ölçekle
+                    if (balls[i].isMoving) {
+                        float dirX = (balls[i].speed.x > 0) ? 1.0f : -1.0f;
+                        float dirY = (balls[i].speed.y > 0) ? 1.0f : -1.0f;
+                        balls[i].speed.x = dirX * baseBallSpeed * scaleX;
+                        balls[i].speed.y = dirY * baseBallSpeed * scaleY;
+                    }
                 }
             }
 
-            // Tuğlaları yeniden ölçekle
+            // 4. Tuğlaları Güncelle (Zaten base değerlerden hesaplıyorsun, bu kısım iyi)
             for (int i = 0; i < BRICK_ROWS; i++) {
                 for (int j = 0; j < BRICK_COLS; j++) {
                     bricks[i][j].rect.x = j * (baseScreenWidth / BRICK_COLS) * scaleX + (baseScreenWidth / BRICK_COLS * 0.05f) * scaleX;
@@ -372,9 +430,9 @@ int main(void)
 
             if (hovered) menuSelection = hovered;
 
-            DrawText("Oyna", playRect.x, playRect.y, screenHeight * 0.044f, (menuSelection == 1) ? RED : LIGHTGRAY);
-            DrawText("Skorlar", scoreRect.x, scoreRect.y, screenHeight * 0.044f, (menuSelection == 2) ? RED : LIGHTGRAY);
-            DrawText("Cikis", exitRect.x, exitRect.y, screenHeight * 0.044f, (menuSelection == 3) ? RED : LIGHTGRAY);
+            DrawText("Play", playRect.x, playRect.y, screenHeight * 0.044f, (menuSelection == 1) ? RED : LIGHTGRAY);
+            DrawText("Scores", scoreRect.x, scoreRect.y, screenHeight * 0.044f, (menuSelection == 2) ? RED : LIGHTGRAY);
+            DrawText("Exit", exitRect.x, exitRect.y, screenHeight * 0.044f, (menuSelection == 3) ? RED : LIGHTGRAY);
 
             if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
                 if (hovered == 1) currentScreen = STATE_CHOICE;
@@ -405,7 +463,7 @@ int main(void)
                 DrawRectangleRec(choiceBgBox, (Color) { 0, 0, 0, 180 });
             }
 
-            DrawText("OYUN MODU SECIN", screenWidth * 0.35f, screenHeight * 0.30f, screenHeight * 0.050f, RAYWHITE);
+            DrawText("Select Game Mode", screenWidth * 0.35f, screenHeight * 0.30f, screenHeight * 0.050f, RAYWHITE);
 
             Rectangle p2Rect = { screenWidth * 0.25f, screenHeight * 0.50f, screenWidth * 0.20f, screenHeight * 0.06f };
             Rectangle botRect = { screenWidth * 0.55f, screenHeight * 0.50f, screenWidth * 0.20f, screenHeight * 0.06f };
@@ -420,7 +478,7 @@ int main(void)
 
             if (choiceHovered) choiceSelection = choiceHovered;
 
-            DrawText("2 Oyuncu", p2Rect.x, p2Rect.y, screenHeight * 0.050f, (choiceSelection == 1) ? RED : LIGHTGRAY);
+            DrawText("2 Players", p2Rect.x, p2Rect.y, screenHeight * 0.050f, (choiceSelection == 1) ? RED : LIGHTGRAY);
             DrawText("Bot vs", botRect.x, botRect.y, screenHeight * 0.050f, (choiceSelection == 2) ? RED : LIGHTGRAY);
 
             if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
@@ -488,10 +546,11 @@ int main(void)
 
             for (int i = 0; i < 3; i++) {
                 Rectangle boxRect = { startX + i * spacing - boxSize / 2.0f, boxY, boxSize, boxSize };
-                
-                // Draw character sprite (Mape göre doğru karakteri seçiyoruz)
-                Rectangle sourceRec = { spriteIndexMap[i] * charSpriteWidth, 0, charSpriteWidth, (float)charactersTex.height };
-                DrawTexturePro(charactersTex, sourceRec, boxRect, (Vector2){0, 0}, 0.0f, WHITE);
+
+                // Draw character sprite normally for both players.
+                float srcH = (float)charactersTex.height;
+                Rectangle sourceRec = (Rectangle){ spriteIndexMap[i] * charSpriteWidth, 0, charSpriteWidth, srcH };
+                DrawTexturePro(charactersTex, sourceRec, boxRect, (Vector2) { 0, 0 }, 0.0f, WHITE);
 
                 // Mouse hover
                 if (CheckCollisionPointRec(charMouse, boxRect)) {
@@ -500,7 +559,7 @@ int main(void)
 
                 // Seçili çerçeve
                 if (*currentSel == i + 1) {
-                    DrawRectangleLinesEx(boxRect, 3, WHITE);
+                    DrawRectangleLinesEx(boxRect, 8, WHITE);
                 }
 
                 // İsim
@@ -512,9 +571,9 @@ int main(void)
             // Skill açıklaması için slotlar
             const char* skillDesc = "";
             switch (*currentSel) {
-                case 1: skillDesc = "Miku: Shoot a laser to gain points without breaking blocks!"; break;
-                case 2: skillDesc = "Teto: Send your drill to break blocks and stun enemies!"; break;
-                case 3: skillDesc = "Neru: Throw your phone and stun enemy no matter what!"; break;
+            case 1: skillDesc = "Miku: Shoot a laser to gain points without breaking blocks!"; break;
+            case 2: skillDesc = "Teto: Send your drill to break blocks and stun enemies!"; break;
+            case 3: skillDesc = "Neru: Throw your phone and stun enemy no matter what!"; break;
             }
             int descSize = (int)(screenHeight * 0.030f);
             DrawText(skillDesc, screenWidth / 2 - MeasureText(skillDesc, descSize) / 2,
@@ -562,85 +621,140 @@ int main(void)
         }
         break;
 
-        START_GAME:;
-                    gameTimer = 120.0f;
-                    drill.active = false;
-                    drill.currentFrame = 0;
-                    drill.frameTimer = 0.0f;
-                    drill.maxFrames = 4;
-                    drill.frameSpeed = 15.0f;
-                    neruCube.active = false;
-                    neruCube.currentFrame = 0;
-                    neruCube.frameTimer = 0.0f;
-                    score1 = 0;
-                    score2 = 0;
+    START_GAME:;
+        gameTimer = 120.0f;
+        drill.active = false;
+        drill.currentFrame = 0;
+        drill.frameTimer = 0.0f;
+        drill.maxFrames = 4;
+        drill.frameSpeed = 15.0f;
+        neruCube.active = false;
+        neruCube.currentFrame = 0;
+        neruCube.frameTimer = 0.0f;
+        score1 = 0;
+        score2 = 0;
 
-                    // Aynı karakter seçilirse P2'yi karart
-                    if (p1CharChoice == p2CharChoice) {
-                        char2.themeColor = (Color){ (unsigned char)(char2.themeColor.r * 0.5f), 
-                                                     (unsigned char)(char2.themeColor.g * 0.5f), 
-                                                     (unsigned char)(char2.themeColor.b * 0.5f), 255 };
+        // Aynı karakter seçilirse P2'yi karart
+        if (p1CharChoice == p2CharChoice) {
+            char2.themeColor = (Color){ (unsigned char)(char2.themeColor.r * 0.5f),
+                                         (unsigned char)(char2.themeColor.g * 0.5f),
+                                         (unsigned char)(char2.themeColor.b * 0.5f), 255 };
+        }
+
+        char1.currentCooldown = 0;
+        char1.isSkillReady = true;
+        char1.isSkillActive = false;
+        char2.currentCooldown = 0;
+        char2.isSkillReady = true;
+        char2.isSkillActive = false;
+        player1.rect = (Rectangle){ screenWidth / 2 - (basePaddleWidth / 2) * scaleX, screenHeight / 2 + 150 * scaleY, basePaddleWidth * scaleX, basePaddleHeight * scaleY };
+        player1.color = char1.themeColor;
+        player1.stunTimer = 0.0f;
+        player1.stunCurrentFrame = 0;
+        player1.stunFrameTimer = 0.0f;
+        player2.rect = (Rectangle){ screenWidth / 2 - (basePaddleWidth / 2) * scaleX, screenHeight / 2 - 170 * scaleY, basePaddleWidth * scaleX, basePaddleHeight * scaleY };
+        player2.color = char2.themeColor;
+        player2.stunTimer = 0.0f;
+        player2.stunCurrentFrame = 0;
+        player2.stunFrameTimer = 0.0f;
+
+        // Ball array temizle
+        for (int i = 0; i < MAX_BALLS; i++) {
+            balls[i].active = false;
+            balls[i].radius = baseBallRadius * ((scaleX + scaleY) / 2.0f);
+        }
+        // Power-up array temizle
+        for (int i = 0; i < MAX_POWERUPS; i++) powerUps[i].active = false;
+
+        // Player 1 başlangıç topu
+        balls[0].active = true;
+        balls[0].owner = 1;
+        balls[0].isMoving = false;
+        balls[0].color = char1.themeColor;
+        balls[0].arrowAngle = 90.0f;
+        balls[0].arrowRotationDir = 1.0f;
+        balls[0].speed = (Vector2){ 0, 0 };
+
+        // Player 2 başlangıç topu
+        balls[1].active = true;
+        balls[1].owner = 2;
+        balls[1].isMoving = false;
+        balls[1].color = char2.themeColor;
+        balls[1].arrowAngle = 270.0f;
+        balls[1].arrowRotationDir = 1.0f;
+        balls[1].speed = (Vector2){ 0, 0 };
+
+        for (int i = 0; i < BRICK_ROWS; i++) {
+            for (int j = 0; j < BRICK_COLS; j++) {
+                bricks[i][j].rect = (Rectangle){
+                    j * (screenWidth / BRICK_COLS),
+                    (screenHeight * 0.35f + i * (screenHeight / 25.0f)),
+                    (screenWidth / BRICK_COLS * 0.95f),
+                    (screenHeight / 30.0f)
+                };
+
+                int val = mapData[selectedMap][i][j];
+                if (val == 0) {
+                    bricks[i][j].active = false;
+                }
+                else {
+                    bricks[i][j].active = true;
+                    bricks[i][j].health = 1;
+                    if (val == 1) { bricks[i][j].type = BRICK_NORMAL;   bricks[i][j].color = WHITE; }
+                    else if (val == 2) { bricks[i][j].type = BRICK_GREEN;    bricks[i][j].color = GREEN; }
+                    else if (val == 3) { bricks[i][j].type = BRICK_PURPLE;   bricks[i][j].color = PURPLE; }
+                    else if (val == 4) { bricks[i][j].type = BRICK_OBSTACLE; bricks[i][j].color = DARKGRAY; }
+                    
+                    if (selectedMap == 4 && bricks[i][j].type != BRICK_OBSTACLE) {
+                        bricks[i][j].health = 2; // 5. harita için 2 can
                     }
+                }
+            }
+        }
 
-                    char1.currentCooldown = 0;
-                    char1.isSkillReady = true;
-                    char1.isSkillActive = false;
-                    char2.currentCooldown = 0;
-                    char2.isSkillReady = true;
-                    char2.isSkillActive = false;
-                    player1.rect = (Rectangle){ screenWidth / 2 - (basePaddleWidth / 2) * scaleX, screenHeight / 2 + 150 * scaleY, basePaddleWidth * scaleX, basePaddleHeight * scaleY };
-                    player1.color = char1.themeColor;
-                    player1.stunTimer = 0.0f;
-                    player2.rect = (Rectangle){ screenWidth / 2 - (basePaddleWidth / 2) * scaleX, screenHeight / 2 - 170 * scaleY, basePaddleWidth * scaleX, basePaddleHeight * scaleY };
-                    player2.color = char2.themeColor;
-                    player2.stunTimer = 0.0f;
+        // --- HAREKETLİ ENGELLERİ BAŞLAT ---
+        for (int i = 0; i < 2; i++) movers[i].active = false;
 
-                    // Ball array temizle
-                    for (int i = 0; i < MAX_BALLS; i++) {
-                        balls[i].active = false;
-                        balls[i].radius = baseBallRadius * ((scaleX + scaleY) / 2.0f);
-                    }
-                    // Power-up array temizle
-                    for (int i = 0; i < MAX_POWERUPS; i++) powerUps[i].active = false;
+        if (selectedMap == 3) { // Harita 4: Elmas Madeni
+            // --- ÜSTTEKİ ENGEL ---
+            movers[0] = (MovingObstacle){
+                { 0, screenHeight * 0.35f, 100 * scaleX, 15 * scaleY },
+                250.0f * scaleX,    // Hız
+                0,                  // Sol limit
+                (float)screenWidth, // Sağ limit
+                true
+            };
 
-                    // Player 1 başlangıç topu
-                    balls[0].active = true;
-                    balls[0].owner = 1;
-                    balls[0].isMoving = false;
-                    balls[0].color = char1.themeColor;
-                    balls[0].arrowAngle = 90.0f;
-                    balls[0].arrowRotationDir = 1.0f;
-                    balls[0].speed = (Vector2){ 0, 0 };
+            // --- ALTTAKİ ENGEL ---
+            movers[1] = (MovingObstacle){
+                { screenWidth - 100 * scaleX, screenHeight * 0.65f, 100 * scaleX, 15 * scaleY },
+                -250.0f * scaleX,   // Ters yönde başlar
+                0,
+                (float)screenWidth,
+                true
+            };
+        }
+        else if (selectedMap == 4) { // Harita 5: Sütunlar
+            // --- ÜSTTEKİ ENGEL ---
+            movers[0] = (MovingObstacle){
+                { 0, screenHeight * 0.28f, 110 * scaleX, 18 * scaleY },
+                280.0f * scaleX,
+                0,
+                (float)screenWidth,
+                true
+            };
 
-                    // Player 2 başlangıç topu
-                    balls[1].active = true;
-                    balls[1].owner = 2;
-                    balls[1].isMoving = false;
-                    balls[1].color = char2.themeColor;
-                    balls[1].arrowAngle = 270.0f;
-                    balls[1].arrowRotationDir = 1.0f;
-                    balls[1].speed = (Vector2){ 0, 0 };
+            // --- ALTTAKİ ENGEL ---
+            movers[1] = (MovingObstacle){
+                { screenWidth - 110 * scaleX, screenHeight * 0.72f, 110 * scaleX, 18 * scaleY },
+                -280.0f * scaleX,
+                0,
+                (float)screenWidth,
+                true
+            };
+        }
 
-                    for (int i = 0; i < BRICK_ROWS; i++) {
-                        for (int j = 0; j < BRICK_COLS; j++) {
-                            bricks[i][j].rect = (Rectangle){
-                                j * (screenWidth / BRICK_COLS),
-                                (screenHeight * 0.35f + i * (screenHeight / 25.0f)),
-                                (screenWidth / BRICK_COLS * 0.95f),
-                                (screenHeight / 30.0f)
-                            };
-                            
-                            int val = mapData[selectedMap][i][j];
-                            if (val == 0) {
-                                bricks[i][j].active = false;
-                            } else {
-                                bricks[i][j].active = true;
-                                bricks[i][j].type = (val == 1) ? BRICK_NORMAL : ((val == 2) ? BRICK_GREEN : BRICK_PURPLE);
-                                bricks[i][j].color = (val == 1) ? WHITE : ((val == 2) ? GREEN : PURPLE);
-                            }
-                        }
-                    }
-                    currentScreen = STATE_GAME;
+        currentScreen = STATE_GAME;
         break;
 
         case STATE_MAP:
@@ -670,7 +784,7 @@ int main(void)
             float spacingX = screenWidth * 0.25f;
             float spacingY = screenHeight * 0.20f;
 
-            const char* mapNames[5] = { "Cross Clash", "Castle Walls", "Chessboard", "Diamond Mine", "Pillars" };
+            const char* mapNames[5] = { "Chessboard", "Castle Walls", "Cross Clash", "Diamond Mine", "Pillars" };
             Vector2 mouse = GetMousePosition();
 
             for (int i = 0; i < 5; i++) {
@@ -678,17 +792,18 @@ int main(void)
                 if (i < 3) {
                     x = screenWidth * 0.5f - spacingX + (i * spacingX) - boxW / 2.0f;
                     y = startY;
-                } else {
+                }
+                else {
                     x = screenWidth * 0.5f - spacingX * 0.5f + ((i - 3) * spacingX) - boxW / 2.0f;
                     y = startY + spacingY;
                 }
 
                 Rectangle box = { x, y, boxW, boxH };
                 Color boxColor = (selectedMap == i) ? YELLOW : DARKGRAY;
-                
-                DrawRectangleRec(box, (Color){ 50, 50, 50, 200 });
+
+                DrawRectangleRec(box, (Color) { 50, 50, 50, 200 });
                 DrawRectangleLinesEx(box, (selectedMap == i ? 3 : 1), boxColor);
-                
+
                 // Harita ismi
                 int fontSize = (int)(screenHeight * 0.025f);
                 DrawText(mapNames[i], (int)(x + boxW / 2.0f - MeasureText(mapNames[i], fontSize) / 2),
@@ -703,34 +818,75 @@ int main(void)
             if (IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_D)) selectedMap = (selectedMap + 1) % 5;
             if (IsKeyPressed(KEY_LEFT) || IsKeyPressed(KEY_A)) selectedMap = (selectedMap + 4) % 5;
             if (IsKeyPressed(KEY_ENTER)) {
-                MAP_CONFIRMED:
+            MAP_CONFIRMED:
                 goto START_GAME;
             }
-
-            // Bottom hint text
-            const char* hintText = "Click or press ENTER to confirm  |  A / D or Arrow Keys to navigate";
-            int hintFontSize = (int)(screenHeight * 0.022f);
-            DrawText(hintText,
-                screenWidth / 2 - MeasureText(hintText, hintFontSize) / 2,
-                (int)(screenHeight * 0.87f),
-                hintFontSize, LIGHTGRAY);
         }
         break;
 
 
         case STATE_HIGHSCORE:
-            ClearBackground(BLUE);
+        {
+            int currentW = GetRenderWidth();
+            int currentH = GetRenderHeight();
+            DrawTexturePro(scoreBgTex,
+                (Rectangle) { 0, 0, scoreBgTex.width, scoreBgTex.height },
+                (Rectangle) { 0, 0, currentW, currentH },
+                (Vector2) { 0, 0 }, 0.0f, WHITE);
+
+            Rectangle scoreBgBox = { currentW * 0.15f, currentH * 0.10f, currentW * 0.70f, currentH * 0.80f };
+            DrawRectangleRec(scoreBgBox, (Color) { 0, 0, 0, 180 });
+
             DrawLeaderboard();
             Color backBtnColor = GRAY;
             if (CheckCollisionPointRec(GetMousePosition(), backbutton)) {
                 backBtnColor = DARKGRAY;
             }
             DrawRectangleRec(backbutton, backBtnColor);
-            DrawText("Geri", 20, 15, 20, BLACK);
+            DrawText("BACK", 20, 15, 20, BLACK);
             if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(GetMousePosition(), backbutton)) {
                 currentScreen = STATE_MENU;
             }
+        }
             break;
+
+        case STATE_INPUT_NAME:
+        {
+            int key = GetCharPressed();
+            while (key > 0) {
+                if ((key >= 32) && (key <= 125) && (letterCount < 15)) {
+                    nameInput[letterCount] = (char)key;
+                    nameInput[letterCount + 1] = '\0';
+                    letterCount++;
+                }
+                key = GetCharPressed();
+            }
+
+            if (IsKeyPressed(KEY_BACKSPACE)) {
+                letterCount--;
+                if (letterCount < 0) letterCount = 0;
+                nameInput[letterCount] = '\0';
+            }
+
+            // ENTER'a basınca asıl kayıt burada gerçekleşir
+            if (IsKeyPressed(KEY_ENTER) && letterCount > 0) {
+                SaveScore(nameInput, winnerScore); // İSMİ BURADA KAYDEDİYORUZ
+                currentScreen = STATE_GAMEOVER;   // Sonra sonuç ekranına geçiyoruz
+            }
+
+            // Çizim kısmı — BeginDrawing/EndDrawing dış döngüde yapılıyor, burada tekrar çağrılmaz!
+            ClearBackground(BLACK);
+            DrawText("NEW HIGH SCORE!", screenWidth / 2 - MeasureText("NEW HIGH SCORE!", 30) / 2, 100 * scaleY, 30 * scaleY, GOLD);
+            DrawText(TextFormat("Score: %d", winnerScore), screenWidth / 2 - MeasureText(TextFormat("Score: %d", winnerScore), 20) / 2, 150 * scaleY, 20 * scaleY, WHITE);
+            DrawText("Type Your Name:", screenWidth / 2 - MeasureText("Type Your Name:", 20) / 2, 200 * scaleY, 20 * scaleY, GRAY);
+
+            Rectangle inputBox = { screenWidth / 2 - 150 * scaleX, 240 * scaleY, 300 * scaleX, 40 * scaleY };
+            DrawRectangleRec(inputBox, RAYWHITE);
+            DrawText(nameInput, inputBox.x + 10 * scaleX, inputBox.y + 5 * scaleY, 30 * scaleY, MAROON);
+
+            DrawText("Press ENTER to save", screenWidth / 2 - MeasureText("Press ENTER to save", 15) / 2, 300 * scaleY, 15 * scaleY, DARKGRAY);
+        }
+        break;
 
         case STATE_GAME:
             ClearBackground(DARKGRAY);
@@ -744,8 +900,14 @@ int main(void)
             // Süre bitti mi kontrolü
             if (gameTimer <= 0) {
                 gameTimer = 0;
-                currentScreen = STATE_GAMEOVER;
-                // Kazananı kaydetmek istersen burada SaveScore fonksiyonunu çağırabilirsin
+                // En yüksek skoru yapanı bul ve winnerScore'a ata
+                winnerScore = (score1 > score2) ? score1 : score2;
+
+                // İsim yazma hazırlığı
+                nameInput[0] = '\0';
+                letterCount = 0;
+
+                currentScreen = STATE_INPUT_NAME; // Önce isim sorma ekranına git
             }
 
             // --- SAYAÇ ÇİZİMİ ---
@@ -754,6 +916,16 @@ int main(void)
             const char* timeText = TextFormat("%02d:%02d", minutes, seconds);
             int timeTextWidth = MeasureText(timeText, 30);
             DrawText(timeText, screenWidth / 2 - timeTextWidth / 2, 20, 30, (gameTimer < 10 ? RED : RAYWHITE));
+
+            // Hareketli engelleri güncelle
+            for (int i = 0; i < 2; i++) {
+                if (movers[i].active) {
+                    movers[i].rect.x += movers[i].speed * GetFrameTime();
+                    if (movers[i].rect.x <= movers[i].leftLimit || movers[i].rect.x + movers[i].rect.width >= movers[i].rightLimit) {
+                        movers[i].speed *= -1; // Sınıra çarpınca geri dön
+                    }
+                }
+            }
 
             // --- Skill Tetikleme Yardımcı Makrosu ---
            // --- Player 1 Skill (KEY_DOWN) ---
@@ -765,6 +937,9 @@ int main(void)
                 char1.skillTickTimer = 0.5f;
 
                 if (char1.skill == SKILL_ROCKET) {
+                    PlaySound(tetoSkillSound);
+                    drill.active = true;
+                    drill.owner = 1;
                     drill.active = true;
                     drill.size = 60.0f * scaleX;
                     drill.position = (Vector2){ player1.rect.x + player1.rect.width / 2.0f, player1.rect.y };
@@ -772,6 +947,7 @@ int main(void)
                     drill.color = char1.themeColor;
                 }
                 else if (char1.skill == SKILL_STUN) {
+                    PlaySound(neruSkillSound);
                     neruCube.active = true;
                     neruCube.size = 40.0f * scaleX;
                     neruCube.rect = (Rectangle){ player1.rect.x + player1.rect.width / 2.0f - neruCube.size / 2.0f, player1.rect.y - neruCube.size, neruCube.size, neruCube.size };
@@ -779,7 +955,7 @@ int main(void)
                     neruCube.color = char1.themeColor;
                 }
                 else if (char1.skill == SKILL_LASER) {
-                    PlaySound(bam);
+                    PlaySound(mikuSkillSound);
                 }
             }
 
@@ -790,18 +966,21 @@ int main(void)
             if (p2SkillFire) {
                 char2.isSkillReady = false;
                 char2.isSkillActive = true;
-                char2.currentCooldown = char2.cooldownMax; // PLAYER 2 İÇİN DE ANINDA BAŞLAT
+                char2.currentCooldown = char2.cooldownMax;
                 char2.skillTimer = 4.0f;
                 char2.skillTickTimer = 0.5f;
 
                 if (char2.skill == SKILL_ROCKET) {
+                    PlaySound(tetoSkillSound);
                     drill.active = true;
+                    drill.owner = 2;
                     drill.size = 60.0f * scaleX;
                     drill.position = (Vector2){ player2.rect.x + player2.rect.width / 2.0f, player2.rect.y + player2.rect.height };
                     drill.speed = 500.0f * scaleY;
                     drill.color = char2.themeColor;
                 }
                 else if (char2.skill == SKILL_STUN) {
+                    PlaySound(neruSkillSound);
                     neruCube.active = true;
                     neruCube.size = 40.0f * scaleX;
                     neruCube.rect = (Rectangle){ player2.rect.x + player2.rect.width / 2.0f - neruCube.size / 2.0f, player2.rect.y + player2.rect.height, neruCube.size, neruCube.size };
@@ -809,7 +988,7 @@ int main(void)
                     neruCube.color = char2.themeColor;
                 }
                 else if (char2.skill == SKILL_LASER) {
-                    PlaySound(bam); // Miku Lazer için eksik olan tetikleyici
+                    PlaySound(mikuSkillSound);
                 }
             }
 
@@ -854,11 +1033,12 @@ int main(void)
                         int k = rand() % 10 + 1, r = rand() % 10 + 1;
                         int c = screenWidth / 4;
                         double velocity;
-                        
-                        if (player2.rect.x + player2.rect.width/2.0f < targetX && k != 10) {
+
+                        if (player2.rect.x + player2.rect.width / 2.0f < targetX && k != 10) {
                             velocity = (r != 1) ? 1.0 : 0.4;
                             player2.rect.x += player2.speed * GetFrameTime() * velocity;
-                        } else if (player2.rect.x + player2.rect.width/2.0f > targetX && k != 10) {
+                        }
+                        else if (player2.rect.x + player2.rect.width / 2.0f > targetX && k != 10) {
                             velocity = (r != 1) ? 1.0 : 0.4;
                             player2.rect.x -= player2.speed * GetFrameTime() * velocity;
                         }
@@ -878,30 +1058,135 @@ int main(void)
                 }
             }
 
+            if (p1CharChoice == 1) BeginBlendMode(BLEND_ADDITIVE);
+            if (p1CharChoice == 1) {
+                float hairSrcW = paddleHairTex.width / 2.0f;
+                float hairSrcH = paddleHairTex.height;
+                float hairDestW = hairSrcW * scaleX;
+                Rectangle leftHairRect = { player1.rect.x - hairDestW, player1.rect.y, hairDestW, player1.rect.height };
+                DrawTexturePro(paddleHairTex, (Rectangle){0, 0, hairSrcW, hairSrcH}, leftHairRect, (Vector2){0, 0}, 0.0f, WHITE);
+            }
             DrawRectangleRec(player1.rect, player1.color);
+            if (p1CharChoice == 1) {
+                float hairSrcW = paddleHairTex.width / 2.0f;
+                float hairSrcH = paddleHairTex.height;
+                float hairDestW = hairSrcW * scaleX;
+                Rectangle rightHairRect = { player1.rect.x + player1.rect.width, player1.rect.y, hairDestW, player1.rect.height };
+                DrawTexturePro(paddleHairTex, (Rectangle){hairSrcW, 0, hairSrcW, hairSrcH}, rightHairRect, (Vector2){0, 0}, 0.0f, WHITE);
+            }
+            if (p1CharChoice == 1) EndBlendMode();
+
+            if (player1.stunTimer > 0.0f) {
+                player1.stunFrameTimer += GetFrameTime();
+                if (player1.stunFrameTimer >= (1.0f / stunFrameSpeed)) {
+                    player1.stunFrameTimer = 0.0f;
+                    player1.stunCurrentFrame++;
+                    if (player1.stunCurrentFrame >= stunMaxFrames) player1.stunCurrentFrame = 0;
+                }
+                float frameW = (float)stunEffectTex.width / stunCols;
+                float frameH = (float)stunEffectTex.height / stunRows;
+                int cX = player1.stunCurrentFrame % stunCols;
+                int cY = player1.stunCurrentFrame / stunCols;
+                Rectangle src = { cX * frameW, cY * frameH, frameW, frameH };
+                // Platformun tam üstüne sabit, raket genişliği kadar küçük
+                float stunSz = player1.rect.width * 1.0f;
+                Rectangle dst = {
+                    player1.rect.x + player1.rect.width / 2.0f - stunSz / 2.0f,
+                    player1.rect.y - stunSz - 2.0f,
+                    stunSz, stunSz
+                };
+                DrawTexturePro(stunEffectTex, src, dst, (Vector2){0,0}, 0.0f, WHITE);
+            }
+
+            if (p2CharChoice == 1) BeginBlendMode(BLEND_ADDITIVE);
+            if (p2CharChoice == 1) {
+                float hairSrcW = paddleHairTex.width / 2.0f;
+                float hairSrcH = paddleHairTex.height;
+                float hairDestW = hairSrcW * scaleX;
+                Rectangle leftHairRect = { player2.rect.x - hairDestW, player2.rect.y, hairDestW, player2.rect.height };
+                DrawTexturePro(paddleHairTex, (Rectangle){0, 0, hairSrcW, hairSrcH}, leftHairRect, (Vector2){0, 0}, 0.0f, WHITE);
+            }
             DrawRectangleRec(player2.rect, player2.color);
+            if (p2CharChoice == 1) {
+                float hairSrcW = paddleHairTex.width / 2.0f;
+                float hairSrcH = paddleHairTex.height;
+                float hairDestW = hairSrcW * scaleX;
+                Rectangle rightHairRect = { player2.rect.x + player2.rect.width, player2.rect.y, hairDestW, player2.rect.height };
+                DrawTexturePro(paddleHairTex, (Rectangle){hairSrcW, 0, hairSrcW, hairSrcH}, rightHairRect, (Vector2){0, 0}, 0.0f, WHITE);
+            }
+            if (p2CharChoice == 1) EndBlendMode();
+
+            if (player2.stunTimer > 0.0f) {
+                player2.stunFrameTimer += GetFrameTime();
+                if (player2.stunFrameTimer >= (1.0f / stunFrameSpeed)) {
+                    player2.stunFrameTimer = 0.0f;
+                    player2.stunCurrentFrame++;
+                    if (player2.stunCurrentFrame >= stunMaxFrames) player2.stunCurrentFrame = 0;
+                }
+                float frameW = (float)stunEffectTex.width / stunCols;
+                float frameH = (float)stunEffectTex.height / stunRows;
+                int cX = player2.stunCurrentFrame % stunCols;
+                int cY = player2.stunCurrentFrame / stunCols;
+                Rectangle src = { cX * frameW, cY * frameH, frameW, frameH };
+                // Platformun tam üstüne sabit, raket genişliği kadar küçük
+                float stunSz = player2.rect.width * 1.0f;
+                Rectangle dst = {
+                    player2.rect.x + player2.rect.width / 2.0f - stunSz / 2.0f,
+                    player2.rect.y - stunSz - 2.0f,
+                    stunSz, stunSz
+                };
+                DrawTexturePro(stunEffectTex, src, dst, (Vector2){0,0}, 0.0f, WHITE);
+            }
+
             for (int i = 0; i < BRICK_ROWS; i++) {
                 for (int j = 0; j < BRICK_COLS; j++) {
                     if (bricks[i][j].active) {
                         DrawRectangleRec(bricks[i][j].rect, bricks[i][j].color);
+                        if (bricks[i][j].type == BRICK_OBSTACLE) {
+                            // Steel cross-hatch pattern to signal "indestructible"
+                            DrawRectangleLinesEx(bricks[i][j].rect, 2, GRAY);
+                            DrawLine(bricks[i][j].rect.x, bricks[i][j].rect.y,
+                                bricks[i][j].rect.x + bricks[i][j].rect.width,
+                                bricks[i][j].rect.y + bricks[i][j].rect.height, GRAY);
+                        }
                     }
                 }
             }
 
+            // --- HAREKETLİ ENGELLERİ ÇİZ ---
+            for (int i = 0; i < 2; i++) {
+                if (movers[i].active) {
+                    DrawRectangleRec(movers[i].rect, GRAY);
+                    DrawRectangleLinesEx(movers[i].rect, 2, DARKGRAY);
+                    DrawLine(movers[i].rect.x, movers[i].rect.y,
+                        movers[i].rect.x + movers[i].rect.width,
+                        movers[i].rect.y + movers[i].rect.height, LIGHTGRAY);
+                }
+            }
+
             // Skill Bars
-            float barWidth = 20 * scaleX;
-            float barHeight = 200 * scaleY;
-            float barY = screenHeight / 2.0f - barHeight / 2.0f;
+            float skillBarWidth = 140 * scaleX;
+            float skillBarHeight = 12 * scaleY;
+            float skillBarY = 55 * scaleY;
 
-            // Player 2 Bar (Left)
-            float p2Fill = (char2.cooldownMax - char2.currentCooldown) / char2.cooldownMax;
-            DrawRectangleLines(10 * scaleX, barY, barWidth, barHeight, LIGHTGRAY);
-            DrawRectangle(10 * scaleX, barY + barHeight * (1.0f - p2Fill), barWidth, barHeight * p2Fill, char2.themeColor);
+            // Player 2 Skill Bar (Sol Üst)
+            float p2Fill = (char2.currentCooldown == 0) ? 1.0f : (char2.cooldownMax - char2.currentCooldown) / char2.cooldownMax;
+            if (p2Fill < 0) p2Fill = 0;
 
-            // Player 1 Bar (Right)
-            float p1Fill = (char1.cooldownMax - char1.currentCooldown) / char1.cooldownMax;
-            DrawRectangleLines(screenWidth - 10 * scaleX - barWidth, barY, barWidth, barHeight, LIGHTGRAY);
-            DrawRectangle(screenWidth - 10 * scaleX - barWidth, barY + barHeight * (1.0f - p1Fill), barWidth, barHeight * p1Fill, char1.themeColor);
+            DrawRectangleLines(40 * scaleX, skillBarY, skillBarWidth, skillBarHeight, LIGHTGRAY);
+            DrawRectangle(40 * scaleX, skillBarY, skillBarWidth * p2Fill, skillBarHeight, char2.themeColor);
+            DrawText("SKILL", 40 * scaleX, skillBarY + skillBarHeight + 4, 10 * scaleY, LIGHTGRAY);
+
+            // Player 1 Skill Bar (Sağ Alt)
+            float p1Fill = (char1.currentCooldown == 0) ? 1.0f : (char1.cooldownMax - char1.currentCooldown) / char1.cooldownMax;
+            if (p1Fill < 0) p1Fill = 0;
+
+            float p1BarX = screenWidth - 40 * scaleX - skillBarWidth;
+            float p1BarY = screenHeight - 65 * scaleY;
+
+            DrawRectangleLines(p1BarX, p1BarY, skillBarWidth, skillBarHeight, LIGHTGRAY);
+            DrawRectangle(p1BarX, p1BarY, skillBarWidth * p1Fill, skillBarHeight, char1.themeColor);
+            DrawText("SKILL", p1BarX + skillBarWidth - MeasureText("SKILL", 10 * scaleY), p1BarY - 12 * scaleY, 10 * scaleY, LIGHTGRAY);
 
             // Laser Logic - char1 (Player1, yukarı doğru)
             Rectangle laserRect = { 0 };
@@ -912,7 +1197,7 @@ int main(void)
                     char1.currentFrame++;
                     if (char1.currentFrame >= char1.maxFrames) char1.currentFrame = 0;
                 }
-                float laserW = player1.rect.width / 2.0f;
+                float laserW = player1.rect.width * 1.5f; // Increased laser width
                 laserRect = (Rectangle){ player1.rect.x + player1.rect.width / 2 - laserW / 2, 0, laserW, player1.rect.y };
                 float frameWidth = (float)mikuLaserTex.width / char1.maxFrames;
                 Rectangle sourceRec = { char1.currentFrame * frameWidth, 60.0f, frameWidth, 796.0f };
@@ -938,12 +1223,13 @@ int main(void)
                     char2.currentFrame++;
                     if (char2.currentFrame >= char2.maxFrames) char2.currentFrame = 0;
                 }
-                float laserW2 = player2.rect.width / 2.0f;
-                // Player2 aşağıya doğru lazer: player2 platformundan ekranın altına kadar
+                float laserW2 = player2.rect.width * 1.5f; // Increased laser width
+                // Player2 laser: from player2 paddle downward to screen bottom
                 float laserTop = player2.rect.y + player2.rect.height;
                 laser2Rect = (Rectangle){ player2.rect.x + player2.rect.width / 2 - laserW2 / 2, laserTop, laserW2, screenHeight - laserTop };
                 float frameWidth2 = (float)mikuLaserTex.width / char2.maxFrames;
-                Rectangle sourceRec2 = { char2.currentFrame * frameWidth2, 60.0f, frameWidth2, 796.0f };
+                // Flip laser texture vertically for P2 (shooting downward)
+                Rectangle sourceRec2 = { char2.currentFrame * frameWidth2, 60.0f + 796.0f, frameWidth2, -796.0f };
                 BeginBlendMode(BLEND_ADDITIVE);
                 DrawTexturePro(mikuLaserTex, sourceRec2, laser2Rect, (Vector2) { 0, 0 }, 0.0f, WHITE);
                 EndBlendMode();
@@ -951,7 +1237,10 @@ int main(void)
                     bool hit = false;
                     for (int i = 0; i < BRICK_ROWS; i++)
                         for (int j = 0; j < BRICK_COLS; j++)
-                            if (bricks[i][j].active && CheckCollisionRecs(laser2Rect, bricks[i][j].rect)) { score2 += 10; hit = true; }
+                            if (bricks[i][j].active && CheckCollisionRecs(laser2Rect, bricks[i][j].rect)
+                                && bricks[i][j].type != BRICK_OBSTACLE) {
+                                score2 += 10; hit = true;
+                            }
                     if (hit) PlaySound(bam);
                     char2.skillTickTimer = 0.0f;
                 }
@@ -964,50 +1253,62 @@ int main(void)
                 if (drill.frameTimer >= (1.0f / drill.frameSpeed)) {
                     drill.frameTimer = 0.0f;
                     drill.currentFrame++;
-                    if (drill.currentFrame >= drill.maxFrames) {
-                        drill.currentFrame = 0;
-                    }
+                    if (drill.currentFrame >= drill.maxFrames) drill.currentFrame = 0;
                 }
 
+                // Hareket
                 drill.position.y += drill.speed * GetFrameTime();
-
                 Rectangle drillRect = { drill.position.x - drill.size / 2.0f, drill.position.y, drill.size, drill.size };
 
-                // Matkabı çiz (tetodrill.png sprite animasyonu)
+                // Matkabı çiz: P1 yukarı gidiyorsa ters (flip), P2 aşağı gidiyorsa düz
                 float frameWidth = (float)tetoDrillTex.width / drill.maxFrames;
-                // Kaynak dikdörtgeni daha kapsayıcı hale getiriyoruz (Y=0'dan başlatıp tam yüksekliği alabiliriz)
-                Rectangle sourceRec = { drill.currentFrame * frameWidth, 0, frameWidth, (float)tetoDrillTex.height };
-                Rectangle destRec = drillRect;
-                Vector2 origin = { 0.0f, 0.0f };
+                float texH = (float)tetoDrillTex.height;
+                Rectangle sourceRec;
+                if (drill.owner == 1) {
+                    // Negatif height ile dikey flip (P1 yukarı atıyor)
+                    sourceRec = (Rectangle){ drill.currentFrame * frameWidth, texH, frameWidth, -texH };
+                } else {
+                    sourceRec = (Rectangle){ drill.currentFrame * frameWidth, 0, frameWidth, texH };
+                }
 
-                // BLEND_ADDITIVE: black pixels become invisible, glow/sparks add naturally to the scene
-                BeginBlendMode(BLEND_ADDITIVE);
-                DrawTexturePro(tetoDrillTex, sourceRec, destRec, origin, 0.0f, WHITE);
+                BeginBlendMode(BLEND_ALPHA);
+                DrawTexturePro(tetoDrillTex, sourceRec, drillRect, (Vector2) { 0, 0 }, 0.0f, WHITE);
                 EndBlendMode();
-
-                // Tuğlaları kırma
+                // TUĞLA KIRMA VE PUANLAMA MANTIĞI
                 bool hitBrick = false;
                 for (int i = 0; i < BRICK_ROWS; i++) {
                     for (int j = 0; j < BRICK_COLS; j++) {
                         if (bricks[i][j].active && CheckCollisionRecs(drillRect, bricks[i][j].rect)) {
-                            bricks[i][j].active = false;
-                            score2 += 10;
+                            if (bricks[i][j].type == BRICK_OBSTACLE) {
+                                drill.active = false;  // Drill shatters on obstacle
+                                PlaySound(bam);
+                                break;
+                            }
+                            if (bricks[i][j].health > 1) {
+                                bricks[i][j].health--;
+                                bricks[i][j].color.r = (unsigned char)(bricks[i][j].color.r * 0.6f);
+                                bricks[i][j].color.g = (unsigned char)(bricks[i][j].color.g * 0.6f);
+                                bricks[i][j].color.b = (unsigned char)(bricks[i][j].color.b * 0.6f);
+                            } else {
+                                bricks[i][j].active = false;
+                            }
                             hitBrick = true;
+                            int points = (bricks[i][j].type == BRICK_GREEN) ? 20 : 10;
+                            if (drill.owner == 1) score1 += points;
+                            else score2 += points;
                         }
                     }
                 }
                 if (hitBrick) PlaySound(bam);
 
-                // Çarpışma: hangi oyuncuya gidiyor? (speed > 0 = aşağı = player1'e, speed < 0 = yukarı = player2'ye)
+                // Oyuncu Çarpışma Mantığı (Stun)
                 if (drill.speed > 0 && CheckCollisionRecs(drillRect, player1.rect)) {
                     drill.active = false;
-                    char2.skillTimer = 0.0f;
                     player1.stunTimer = 2.5f;
                     PlaySound(bam);
                 }
                 else if (drill.speed < 0 && CheckCollisionRecs(drillRect, player2.rect)) {
                     drill.active = false;
-                    char1.skillTimer = 0.0f;
                     player2.stunTimer = 2.5f;
                     PlaySound(bam);
                 }
@@ -1015,8 +1316,6 @@ int main(void)
                 // Ekrandan çıkma kontrolü
                 if (drill.position.y > screenHeight || drill.position.y < -drill.size) {
                     drill.active = false;
-                    if (drill.speed > 0) char2.skillTimer = 0.0f;
-                    else char1.skillTimer = 0.0f;
                 }
             }
 
@@ -1048,10 +1347,9 @@ int main(void)
                 // Neru telefonu çiz (neruphone.png sprite animasyonu)
                 float frameWidth = (float)neruPhoneTex.width / neruCube.maxFrames;
                 Rectangle sourceRec = { neruCube.currentFrame * frameWidth, 0, frameWidth, (float)neruPhoneTex.height };
-                
-                // BLEND_ADDITIVE: black pixels become invisible, glow/sparks add naturally to the scene
-                BeginBlendMode(BLEND_ADDITIVE);
-                DrawTexturePro(neruPhoneTex, sourceRec, neruCube.rect, (Vector2){0, 0}, 0.0f, WHITE);
+
+                BeginBlendMode(BLEND_ALPHA);
+                DrawTexturePro(neruPhoneTex, sourceRec, neruCube.rect, (Vector2) { 0, 0 }, 0.0f, WHITE);
                 EndBlendMode();
 
                 // Çarpışma: hangi yöne gidiyor?
@@ -1078,12 +1376,13 @@ int main(void)
                 }
             }
 
-            DrawText(TextFormat("SKOR: %d", score2), 40 * scaleX, 20, 20, RAYWHITE);
-            DrawText(TextFormat("SKOR: %d", score1), 40 * scaleX, screenHeight - 40, 20, RAYWHITE);
+            DrawText(TextFormat("SCORE: %d", score2), 40 * scaleX, 20, 20, RAYWHITE);
+            DrawText(TextFormat("SCORE: %d", score1), 40 * scaleX, screenHeight - 40, 20, RAYWHITE);
 
-            // --- NİŞAN ALMA AYARLARI ---  //+BALL LOGICS
-            float rotationSpeed = 150.0f;   // Okun dönüş hızı
-            float arrowLen = 60.0f * scaleY; // Okun görsel uzunluğu
+            // --- NİŞAN ALMA AYARLARI --- 
+            float uniformScale = (scaleX + scaleY) / 2.0f; // EKRAN ORANINI SABİTLE
+            float rotationSpeed = 150.0f;
+            float arrowLen = 60.0f * uniformScale; // scaleY yerine uniformScale kullan
 
             // --- BALL LOGICS (Multi-ball System) ---
             int p1BallCount = 0;
@@ -1097,42 +1396,53 @@ int main(void)
                 if (!balls[i].isMoving) {
                     // Aiming state
                     Paddle* ownerPaddle = (balls[i].owner == 1) ? &player1 : &player2;
+
+                    // Topun pozisyonunu güncel ölçeğe göre raketin merkezine bağla
                     balls[i].position.x = ownerPaddle->rect.x + ownerPaddle->rect.width / 2.0f;
+
                     if (balls[i].owner == 1)
                         balls[i].position.y = ownerPaddle->rect.y - balls[i].radius - 2.0f;
                     else
                         balls[i].position.y = ownerPaddle->rect.y + ownerPaddle->rect.height + balls[i].radius + 2.0f;
 
                     balls[i].arrowAngle += rotationSpeed * balls[i].arrowRotationDir * GetFrameTime();
-                    // Angle constraints based on owner
+
+                    // Açı sınırları
                     if (balls[i].owner == 1) {
                         if (balls[i].arrowAngle > 135.0f || balls[i].arrowAngle < 45.0f) balls[i].arrowRotationDir *= -1;
-                    } else {
+                    }
+                    else {
                         if (balls[i].arrowAngle > 315.0f || balls[i].arrowAngle < 225.0f) balls[i].arrowRotationDir *= -1;
                     }
 
+                    // Okun uç noktasını hesapla
                     Vector2 arrowEnd = {
                         balls[i].position.x + cosf(balls[i].arrowAngle * DEG2RAD) * arrowLen,
                         balls[i].position.y - sinf(balls[i].arrowAngle * DEG2RAD) * arrowLen
                     };
-                    DrawLineEx(balls[i].position, arrowEnd, 3.5f * scaleX, balls[i].color);
+
+                    // ÇİZİM: Kalınlık için de uniformScale kullan (Okun yamulmasını engeller)
+                    DrawLineEx(balls[i].position, arrowEnd, 4.0f * uniformScale, balls[i].color);
 
                     bool launchRequested = false;
                     if (balls[i].owner == 1) {
                         if (IsKeyPressed(KEY_UP)) launchRequested = true;
-                    } else {
+                    }
+                    else {
                         launchRequested = (isBotMode && (rand() % 100 < 2)) || (!isBotMode && IsKeyPressed(KEY_W));
                     }
 
                     if (launchRequested) {
+                        // Fırlatma hızını da ölçekle
                         balls[i].speed.x = cosf(balls[i].arrowAngle * DEG2RAD) * baseBallSpeed * scaleX;
                         balls[i].speed.y = -sinf(balls[i].arrowAngle * DEG2RAD) * baseBallSpeed * scaleY;
                         balls[i].isMoving = true;
                     }
-                } else {
-                    // Moving state
+                }
+                else {
+                    // Moving state (Hareket kodun aynı kalabilir)
                     balls[i].position.x += balls[i].speed.x * GetFrameTime();
-                    balls[i].position.y += balls[i].speed.y * GetFrameTime();
+                    balls[i].position.y += balls[i].speed.y * GetFrameTime();   
 
                     // Wall collisions
                     if (balls[i].position.x >= (screenWidth - balls[i].radius) || balls[i].position.x <= balls[i].radius) {
@@ -1143,12 +1453,22 @@ int main(void)
                         balls[i].active = false; // Kenardan geçince yok olsun
                     }
 
+                    // Hareketli engel çarpışma kontrolü
+                    for (int m = 0; m < 2; m++) {
+                        if (movers[m].active && CheckCollisionCircleRec(balls[i].position, balls[i].radius, movers[m].rect)) {
+                            balls[i].speed.y *= -1; // Topu yansıt
+                            PlaySound(bam);
+                            if (balls[i].speed.y > 0) balls[i].position.y = movers[m].rect.y + movers[m].rect.height + balls[i].radius;
+                            else balls[i].position.y = movers[m].rect.y - balls[i].radius;
+                        }
+                    }
+
                     // Paddle collisions & Ownership change
                     if (CheckCollisionCircleRec(balls[i].position, balls[i].radius, player1.rect)) {
                         PlaySound(bam);
                         balls[i].speed.y = -fabsf(balls[i].speed.y); // Bounce up
                         balls[i].position.y = player1.rect.y - balls[i].radius;
-                        
+
                         if (balls[i].owner != 1) {
                             // Player 1 takes ownership
                             if (p1BallCount < MAX_BALLS_PER_PLAYER) {
@@ -1156,12 +1476,14 @@ int main(void)
                                 balls[i].color = char1.themeColor;
                                 p1BallCount++;
                                 p2BallCount--;
-                            } else {
+                            }
+                            else {
                                 balls[i].active = false; // Delete if limit reached
                                 p2BallCount--;
                             }
                         }
-                    } else if (CheckCollisionCircleRec(balls[i].position, balls[i].radius, player2.rect)) {
+                    }
+                    else if (CheckCollisionCircleRec(balls[i].position, balls[i].radius, player2.rect)) {
                         PlaySound(bam);
                         balls[i].speed.y = fabsf(balls[i].speed.y); // Bounce down
                         balls[i].position.y = player2.rect.y + player2.rect.height + balls[i].radius;
@@ -1173,33 +1495,76 @@ int main(void)
                                 balls[i].color = char2.themeColor;
                                 p2BallCount++;
                                 p1BallCount--;
-                            } else {
+                            }
+                            else {
                                 balls[i].active = false; // Delete if limit reached
                                 p1BallCount--;
                             }
                         }
                     }
 
-                    // Brick collisions
                     for (int r = 0; r < BRICK_ROWS; r++) {
                         for (int c = 0; c < BRICK_COLS; c++) {
                             if (bricks[r][c].active && CheckCollisionCircleRec(balls[i].position, balls[i].radius, bricks[r][c].rect)) {
                                 PlaySound(bam);
-                                balls[i].speed.y *= -1;
+
+                                Rectangle rect = bricks[r][c].rect;
+                                Vector2 ballPos = balls[i].position;
+
+                                // Topun kenarlara olan uzaklığını hesapla
+                                float overlapX = 0, overlapY = 0;
+
+                                if (ballPos.x < rect.x) overlapX = ballPos.x - rect.x; // Sol
+                                else if (ballPos.x > rect.x + rect.width) overlapX = ballPos.x - (rect.x + rect.width); // Sağ
+
+                                if (ballPos.y < rect.y) overlapY = ballPos.y - rect.y; // Üst
+                                else if (ballPos.y > rect.y + rect.height) overlapY = ballPos.y - (rect.y + rect.height); // Alt
+
+                                // Çarpışma yönüne göre hız yansıt ve topu dışarı it (Bug engelleme)
+                                if (fabsf(overlapX) > fabsf(overlapY)) {
+                                    balls[i].speed.x *= -1; // Yatay çarpışma
+                                    if (overlapX > 0) balls[i].position.x = rect.x + rect.width + balls[i].radius;
+                                    else balls[i].position.x = rect.x - balls[i].radius;
+                                }
+                                else {
+                                    balls[i].speed.y *= -1; // Dikey çarpışma
+                                    if (overlapY > 0) balls[i].position.y = rect.y + rect.height + balls[i].radius;
+                                    else balls[i].position.y = rect.y - balls[i].radius;
+                                }
+
+                                // Eğer engel (indestructible) ise tuğlayı kırma, sadece sektirmiş olduk
+                                if (bricks[r][c].type == BRICK_OBSTACLE) continue;
+
+                                if (bricks[r][c].health > 1) {
+                                    bricks[r][c].health--;
+                                    bricks[r][c].color.r = (unsigned char)(bricks[r][c].color.r * 0.6f);
+                                    bricks[r][c].color.g = (unsigned char)(bricks[r][c].color.g * 0.6f);
+                                    bricks[r][c].color.b = (unsigned char)(bricks[r][c].color.b * 0.6f);
+                                    continue;
+                                }
+
+                                // Normal tuğla işlemleri
                                 bricks[r][c].active = false;
-                                
+
+                                // Puan hesaplama
                                 int points = (bricks[r][c].type == BRICK_GREEN) ? 20 : 10;
                                 if (balls[i].owner == 1) score1 += points;
                                 else score2 += points;
 
-                                // Mor tuğla ise özel güç düşür
+                                // Power-Up düşürme mantığı (kirilan mor ise)
                                 if (bricks[r][c].type == BRICK_PURPLE) {
                                     for (int p = 0; p < MAX_POWERUPS; p++) {
                                         if (!powerUps[p].active) {
                                             powerUps[p].active = true;
-                                            powerUps[p].position = (Vector2){ bricks[r][c].rect.x + bricks[r][c].rect.width / 2.0f, bricks[r][c].rect.y };
+                                            powerUps[p].position = (Vector2){ rect.x + rect.width / 2.0f, rect.y };
                                             powerUps[p].targetPlayer = balls[i].owner;
                                             powerUps[p].speed = (balls[i].owner == 1) ? 200.0f * scaleY : -200.0f * scaleY;
+
+                                            //Rastgele tip belirleme
+                                            int chance = rand() % 3;
+                                            if (chance == 0) powerUps[p].type = PW_COOLDOWN;
+                                            else if (chance == 1) powerUps[p].type = PW_POINTS;
+                                            else powerUps[p].type = PW_EXTRA_BALL;
                                             break;
                                         }
                                     }
@@ -1207,7 +1572,9 @@ int main(void)
                             }
                         }
                     }
+
                 }
+
                 DrawCircleV(balls[i].position, balls[i].radius, balls[i].color);
             }
 
@@ -1215,25 +1582,56 @@ int main(void)
             for (int i = 0; i < MAX_POWERUPS; i++) {
                 if (powerUps[i].active) {
                     powerUps[i].position.y += powerUps[i].speed * GetFrameTime();
-                    
-                    // Draw Power-up (Beyaz bir top)
-                    DrawCircleV(powerUps[i].position, 8.0f * scaleX, WHITE);
-                    DrawCircleLines((int)powerUps[i].position.x, (int)powerUps[i].position.y, 8.0f * scaleX, PURPLE);
 
-                    // Collection
-                    if (CheckCollisionCircleRec(powerUps[i].position, 8.0f * scaleX, player1.rect)) {
-                        powerUps[i].active = false;
-                        char1.currentCooldown = 0; // Skill ready
-                        char1.isSkillReady = true;
-                        PlaySound(bam);
-                    } else if (CheckCollisionCircleRec(powerUps[i].position, 8.0f * scaleX, player2.rect)) {
-                        powerUps[i].active = false;
-                        char2.currentCooldown = 0; // Skill ready
-                        char2.isSkillReady = true;
-                        PlaySound(bam);
+                    // --- GÖRSELLEŞTİRME ---
+                    Color pwColor = WHITE;
+                    if (powerUps[i].type == PW_COOLDOWN) pwColor = PURPLE;
+                    else if (powerUps[i].type == PW_POINTS) pwColor = GOLD;
+                    else if (powerUps[i].type == PW_EXTRA_BALL) pwColor = SKYBLUE;
+
+                    DrawCircleV(powerUps[i].position, 10.0f * scaleX, pwColor);
+                    DrawCircleLines((int)powerUps[i].position.x, (int)powerUps[i].position.y, 10.0f * scaleX, BLACK);
+
+                    // --- TOPLAMA (COLLISION) ---
+                    Paddle* players[2] = { &player1, &player2 };
+                    int* scores[2] = { &score1, &score2 };
+                    Character* chars[2] = { &char1, &char2 };
+
+                    for (int pIdx = 0; pIdx < 2; pIdx++) {
+                        if (CheckCollisionCircleRec(powerUps[i].position, 10.0f * scaleX, players[pIdx]->rect)) {
+                            powerUps[i].active = false;
+                            PlaySound(bam);
+
+                            switch (powerUps[i].type) {
+                            case PW_COOLDOWN:
+                                chars[pIdx]->currentCooldown = 0;
+                                chars[pIdx]->isSkillReady = true;
+                                break;
+
+                            case PW_POINTS:
+                                *(scores[pIdx]) += 100; // +100 Puan ekle
+                                break;
+
+                            case PW_EXTRA_BALL:
+                                // Pasif bir top bul ve aktif et
+                                for (int b = 0; b < MAX_BALLS; b++) {
+                                    if (!balls[b].active) {
+                                        balls[b].active = true;
+                                        balls[b].owner = pIdx + 1;
+                                        balls[b].isMoving = false; // Rakete yapışık başlasın
+                                        balls[b].color = chars[pIdx]->themeColor;
+                                        balls[b].arrowAngle = (pIdx == 0) ? 90.0f : 270.0f;
+                                        balls[b].arrowRotationDir = 1.0f;
+                                        balls[b].radius = baseBallRadius * ((scaleX + scaleY) / 2.0f);
+                                        break;
+                                    }
+                                }
+                                break;
+                            }
+                        }
                     }
 
-                    // Screen limit
+                    // Ekran sınırı kontrolü
                     if (powerUps[i].position.y < 0 || powerUps[i].position.y > screenHeight) {
                         powerUps[i].active = false;
                     }
@@ -1250,7 +1648,7 @@ int main(void)
                         balls[i].color = char1.themeColor;
                         balls[i].arrowAngle = 90.0f;
                         balls[i].arrowRotationDir = 1.0f;
-                        balls[i].speed = (Vector2){0,0};
+                        balls[i].speed = (Vector2){ 0,0 };
                         break;
                     }
                 }
@@ -1264,7 +1662,7 @@ int main(void)
                         balls[i].color = char2.themeColor;
                         balls[i].arrowAngle = 270.0f;
                         balls[i].arrowRotationDir = 1.0f;
-                        balls[i].speed = (Vector2){0,0};
+                        balls[i].speed = (Vector2){ 0,0 };
                         break;
                     }
                 }
@@ -1283,94 +1681,114 @@ int main(void)
 
             break;
 
-            case STATE_PAUSE:
-            {
-                // Değişkenlere güvenmek yerine doğrudan o anki render boyutlarını alıyoruz
-                int currentW = GetRenderWidth();
-                int currentH = GetRenderHeight();
+        case STATE_PAUSE:
+        {
+            int currentW = GetRenderWidth();
+            int currentH = GetRenderHeight();
+            Vector2 mousePos = GetMousePosition();
 
-                // Arka planı hafif karart (Tüm ekranı kaplaması için currentW/H kullanıyoruz)
-                DrawRectangle(0, 0, currentW, currentH, (Color) { 0, 0, 0, 180 });
+            DrawTexturePro(pauseBgTex,
+                (Rectangle) { 0, 0, pauseBgTex.width, pauseBgTex.height },
+                (Rectangle) { 0, 0, currentW, currentH },
+                (Vector2) { 0, 0 }, 0.0f, WHITE);
 
-                // "GAME IS PAUSED" yazısını merkeze al
-                int pauseFontSize = (int)(30 * scaleY);
-                int textWidth = MeasureText("GAME IS PAUSED", pauseFontSize);
-                DrawText("GAME IS PAUSED", currentW / 2 - textWidth / 2, currentH * 0.35f, pauseFontSize, RAYWHITE);
+            Rectangle pauseBgBox = { currentW * 0.25f, currentH * 0.25f, currentW * 0.50f, currentH * 0.50f };
+            DrawRectangleRec(pauseBgBox, (Color) { 0, 0, 0, 180 });
 
-                // Buton alanlarını hesapla
-                Rectangle resRect = { currentW / 2 - 100 * scaleX, currentH * 0.5f, 200 * scaleX, 40 * scaleY };
-                Rectangle menRect = { currentW / 2 - 100 * scaleX, currentH * 0.6f, 200 * scaleX, 40 * scaleY };
+            // Başlık
+            int pauseFontSize = (int)(30 * scaleY);
+            int textWidth = MeasureText("GAME IS PAUSED", pauseFontSize);
+            DrawText("GAME IS PAUSED", currentW / 2 - textWidth / 2, currentH * 0.35f, pauseFontSize, RAYWHITE);
 
-                // Klavye Navigasyonu
-                if (IsKeyPressed(KEY_DOWN)) pauseSelection = 2;
-                if (IsKeyPressed(KEY_UP)) pauseSelection = 1;
+            // Buton alanları
+            Rectangle resRect = { currentW / 2 - 100 * scaleX, currentH * 0.5f, 200 * scaleX, 40 * scaleY };
+            Rectangle menRect = { currentW / 2 - 100 * scaleX, currentH * 0.6f, 200 * scaleX, 40 * scaleY };
 
-                // Görsel Seçenekler (Yazıları butonların içine tam ortalıyoruz)
-                int btnFontSize = (int)(25 * scaleY);
+            // --- FARE KONTROLÜ (HOVER) ---
+            // Fare hangisinin üzerindeyse seçim o olsun
+            if (CheckCollisionPointRec(mousePos, resRect)) pauseSelection = 1;
+            else if (CheckCollisionPointRec(mousePos, menRect)) pauseSelection = 2;
 
-                DrawText("CONTINUE", resRect.x + (resRect.width - MeasureText("CONTINUE", btnFontSize)) / 2,
-                    resRect.y, btnFontSize, (pauseSelection == 1) ? YELLOW : LIGHTGRAY);
+            // Klavye Navigasyonu (Yine de çalışsın)
+            if (IsKeyPressed(KEY_DOWN)) pauseSelection = 2;
+            if (IsKeyPressed(KEY_UP)) pauseSelection = 1;
 
-                DrawText("MAIN MENU", menRect.x + (menRect.width - MeasureText("MAIN MENU", btnFontSize)) / 2,
-                    menRect.y, btnFontSize, (pauseSelection == 2) ? YELLOW : LIGHTGRAY);
+            // Buton Görselleri
+            int btnFontSize = (int)(25 * scaleY);
+            DrawText("CONTINUE", resRect.x + (resRect.width - MeasureText("CONTINUE", btnFontSize)) / 2,
+                resRect.y, btnFontSize, (pauseSelection == 1) ? YELLOW : LIGHTGRAY);
 
-                // Seçim Onayı
-                if (IsKeyPressed(KEY_ENTER) || (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(GetMousePosition(), (pauseSelection == 1 ? resRect : menRect)))) {
-                    if (pauseSelection == 1) currentScreen = STATE_GAME;
-                    else {
-                        if (score1 > 0 || score2 > 0) SaveScore("Son Mac", (score1 > score2 ? score1 : score2));
-                        currentScreen = STATE_MENU;
-                    }
+            DrawText("MAIN MENU", menRect.x + (menRect.width - MeasureText("MAIN MENU", btnFontSize)) / 2,
+                menRect.y, btnFontSize, (pauseSelection == 2) ? YELLOW : LIGHTGRAY);
+
+            // --- TIKLAMA KONTROLÜ ---
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                if (CheckCollisionPointRec(mousePos, resRect)) {
+                    currentScreen = STATE_GAME;
                 }
-
-                // ESC'ye basınca tekrar oyuna dön
-                if (IsKeyPressed(KEY_ESCAPE)) currentScreen = STATE_GAME;
-            }
-            break;
-
-            case STATE_GAMEOVER:
-            {
-                ClearBackground(BLACK);
-
-                const char* title = "GAME OVER";
-                int titleSize = 60 * scaleY;
-                DrawText(title, screenWidth / 2 - MeasureText(title, titleSize) / 2, screenHeight * 0.2f, titleSize, RED);
-
-                // Kazananı Belirle
-                const char* winnerText;
-                Color winnerColor;
-                if (score1 > score2) {
-                    winnerText = "PLAYER 1 WINS!";
-                    winnerColor = char1.themeColor;
-                }
-                else if (score2 > score1) {
-                    winnerText = isBotMode ? "BOT WINS!" : "PLAYER 2 WINS!";
-                    winnerColor = char2.themeColor;
-                }
-                else {
-                    winnerText = "IT'S A DRAW!";
-                    winnerColor = WHITE;
-                }
-
-                int winSize = 40 * scaleY;
-                DrawText(winnerText, screenWidth / 2 - MeasureText(winnerText, winSize) / 2, screenHeight * 0.4f, winSize, winnerColor);
-
-                // Skorları Göster
-                DrawText(TextFormat("P1 Score: %d", score1), screenWidth * 0.3f, screenHeight * 0.55f, 25 * scaleY, char1.themeColor);
-                DrawText(TextFormat("P2 Score: %d", score2), screenWidth * 0.6f, screenHeight * 0.55f, 25 * scaleY, char2.themeColor);
-
-                // Menüye Dönüş Talimatı
-                const char* info = "Press ENTER to Return to Main Menu";
-                DrawText(info, screenWidth / 2 - MeasureText(info, 20) / 2, screenHeight * 0.8f, 20, LIGHTGRAY);
-
-                if (IsKeyPressed(KEY_ENTER)) {
+                else if (CheckCollisionPointRec(mousePos, menRect)) {
+                    if (score1 > 0 || score2 > 0) SaveScore("Player 1", (score1 > score2 ? score1 : score2));
                     currentScreen = STATE_MENU;
                 }
             }
-            break;
+
+            // ENTER ile onaylama kontrolü (Klavye kullanıcıları için)
+            if (IsKeyPressed(KEY_ENTER)) {
+                if (pauseSelection == 1) currentScreen = STATE_GAME;
+                else {
+                    if (score1 > 0 || score2 > 0) SaveScore("Player 2", (score1 > score2 ? score1 : score2));
+                    currentScreen = STATE_MENU;
+                }
+            }
+
+            // ESC ile dön
+            if (IsKeyPressed(KEY_ESCAPE)) currentScreen = STATE_GAME;
+        }
+        break;
+
+        case STATE_GAMEOVER:
+        {
+            ClearBackground(BLACK);
+
+            const char* title = "GAME OVER";
+            int titleSize = 60 * scaleY;
+            DrawText(title, screenWidth / 2 - MeasureText(title, titleSize) / 2, screenHeight * 0.2f, titleSize, RED);
+
+            // Kazananı Belirle
+            const char* winnerText;
+            Color winnerColor;
+            if (score1 > score2) {
+                winnerText = "PLAYER 1 WINS!";
+                winnerColor = char1.themeColor;
+            }
+            else if (score2 > score1) {
+                winnerText = isBotMode ? "BOT WINS!" : "PLAYER 2 WINS!";
+                winnerColor = char2.themeColor;
+            }
+            else {
+                winnerText = "IT'S A DRAW!";
+                winnerColor = WHITE;
+            }
+
+            int winSize = 40 * scaleY;
+            DrawText(winnerText, screenWidth / 2 - MeasureText(winnerText, winSize) / 2, screenHeight * 0.4f, winSize, winnerColor);
+
+            // Skorları Göster
+            DrawText(TextFormat("P1 Score: %d", score1), screenWidth * 0.3f, screenHeight * 0.55f, 25 * scaleY, char1.themeColor);
+            DrawText(TextFormat("P2 Score: %d", score2), screenWidth * 0.6f, screenHeight * 0.55f, 25 * scaleY, char2.themeColor);
+
+            // Menüye Dönüş Talimatı
+            const char* info = "Press ENTER to Return to Main Menu";
+            DrawText(info, screenWidth / 2 - MeasureText(info, 20) / 2, screenHeight * 0.8f, 20, LIGHTGRAY);
+
+            if (IsKeyPressed(KEY_ENTER)) {
+                currentScreen = STATE_MENU;
+            }
+        }
+        break;
 
         }
-       
+
         // Diğer ekranlarda (Karakter seçimi, Skorlar vb.) ESC'ye basınca menüye döner
         if (IsKeyPressed(KEY_ESCAPE)) {
             if (currentScreen == STATE_CHOICE || currentScreen == STATE_CHARACTER || currentScreen == STATE_HIGHSCORE) {
@@ -1381,14 +1799,9 @@ int main(void)
         EndDrawing();
     }
 
-    // Uygulama kapanırken de skoru kaydedelim ki ani kapanışlarda kaybolmasın (eğer oyundaysa)
-    if (currentScreen == STATE_GAME) {
-        if (score1 >= score2) SaveScore("Oyuncu 1", score1);
-        else SaveScore("Oyuncu 2", score2);
-    }
-
     UnloadSound(bam);
     UnloadTexture(mikuLaserTex);
+    UnloadTexture(paddleHairTex);
     UnloadTexture(menuBgTex);
     UnloadTexture(tetoDrillTex);
     UnloadTexture(charactersTex);
@@ -1400,11 +1813,12 @@ int main(void)
     return 0;
 }
 
+
 void LoadScores() {
     FILE* file = fopen("scores.txt", "rb");
     if (file == NULL) {
         for (int i = 0; i < MAX_SCORES; i++) {
-            strcpy(topScores[i].name, "Empty");
+            strcpy(topScores[i].name, "Empty Slot");
             topScores[i].score = 0;
         }
     }
@@ -1436,10 +1850,23 @@ void SaveScore(const char* name, int newScore) {
 }
 
 void DrawLeaderboard() {
-    DrawText("EN YUKSEK SKORLAR", GetScreenWidth() / 2 - MeasureText("EN YUKSEK SKORLAR", 30) / 2, 80, 30, GOLD);
+    int sw = GetScreenWidth();
+    int sh = GetScreenHeight();
+    float sy = sh / 450.0f;
+    int titleSize = (int)(40 * sy);
+    int entrySize = (int)(28 * sy);
+    int titleY    = (int)(sh * 0.15f);
+    int startY    = (int)(sh * 0.28f);
+    int rowSpacing = (int)(sh * 0.10f);
+
+    DrawText("EN YUKSEK SKORLAR",
+        sw / 2 - MeasureText("EN YUKSEK SKORLAR", titleSize) / 2,
+        titleY, titleSize, GOLD);
 
     for (int i = 0; i < MAX_SCORES; i++) {
-        DrawText(TextFormat("%d. %s: %d", i + 1, topScores[i].name, topScores[i].score),
-            GetScreenWidth() / 2 - 100, 150 + (i * 40), 25, LIGHTGRAY);
+        const char* entry = TextFormat("%d. %s: %d", i + 1, topScores[i].name, topScores[i].score);
+        DrawText(entry,
+            sw / 2 - MeasureText(entry, entrySize) / 2,
+            startY + i * rowSpacing, entrySize, LIGHTGRAY);
     }
 }
