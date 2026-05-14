@@ -259,11 +259,12 @@ int main(void)
     }
     Rectangle backbutton = { 10, 10, 80, 30 };
 
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(screenWidth, screenHeight, "Raylib - Pong Breaker Royale");
     InitAudioDevice();
     Sound bam = LoadSound("Pop.ogg");
     Sound mikuSkillSound  = LoadSound("mikuskillsound.wav");
-    Sound tetoSkillSound  = LoadSound("tetoskillsond.mp3");
+    Sound tetoSkillSound  = LoadSound("tetoskillsound.wav");
     Sound neruSkillSound  = LoadSound("neruskillsound.wav");
 
     Texture2D mikuLaserTex = LoadTexture("MikuLaser.png");
@@ -316,7 +317,14 @@ int main(void)
 
         // F11 ile tam ekran geçişi
         if (IsKeyPressed(KEY_F11)) {
-            ToggleFullscreen();
+            int display = GetCurrentMonitor();
+            if (IsWindowFullscreen()) {
+                ToggleFullscreen();
+                SetWindowSize(800, 450);
+            } else {
+                SetWindowSize(GetMonitorWidth(display), GetMonitorHeight(display));
+                ToggleFullscreen();
+            }
         }
 
         UpdateMusicStream(menuMusic);
