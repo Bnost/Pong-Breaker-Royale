@@ -266,9 +266,9 @@ int main(void)
     Sound mikuSkillSound = LoadSound("mikuskillsound.wav");
     Sound tetoSkillSound = LoadSound("tetoskillsound.wav");
     Sound neruSkillSound = LoadSound("neruskillsound.wav");
-    Music mikuMusic = LoadMusicStream("mikubyanamanaguchi.wav");
+    Music mikuMusic = LoadMusicStream("mikutheme.ogg");
     Music tetoMusic = LoadMusicStream("tetoris.wav");
-    Music neruMusic = LoadMusicStream("[Neru] _Stop Nagging Me.wav");
+    Music neruMusic = LoadMusicStream("nerutheme.ogg");
 
     // Döngüsel çalması için ayarla (opsiyonel)
     mikuMusic.looping = true;
