@@ -255,6 +255,7 @@ int main(void)
     Rectangle backbutton = { 10, 10, 80, 30 };
     int fixbot = 0; //bot hareketi düzelmek için 
 
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE); // Yeniden boyutlandırmaya izin ver (Tam ekranda ölçekleme sorunlarını çözer)
     InitWindow(screenWidth, screenHeight, "Raylib - Vocaloid Breaker Royale");
     InitAudioDevice();
     Sound bam = LoadSound("Media/Pop.ogg");
@@ -317,7 +318,14 @@ int main(void)
 
         // F11 ile tam ekran geçişi
         if (IsKeyPressed(KEY_F11)) {
-            ToggleFullscreen();
+            int monitor = GetCurrentMonitor();
+            if (IsWindowFullscreen()) {
+                ToggleFullscreen();
+                SetWindowSize(800, 450); // Çıkarken eski boyuta dön
+            } else {
+                SetWindowSize(GetMonitorWidth(monitor), GetMonitorHeight(monitor));
+                ToggleFullscreen(); // Windows'ta borderless (çerçevesiz) tam ekran yapar, Alt-Tab/Ses siyah ekranını çözer
+            }
         }
 
         if (currentScreen == STATE_GAME || currentScreen == STATE_PAUSE) {
