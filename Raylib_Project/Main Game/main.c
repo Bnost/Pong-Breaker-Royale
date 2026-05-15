@@ -100,6 +100,15 @@ typedef enum {
 typedef struct {
     Rectangle rect;
     float speed;
+    float leftLimit;
+    float rightLimit;
+    bool active;
+} MovingObstacle;
+MovingObstacle movers[2];
+
+typedef struct {
+    Rectangle rect;
+    float speed;
     Color color;
     float stunTimer;
 } Paddle;
@@ -186,6 +195,9 @@ Ball balls[MAX_BALLS];
 PowerUp powerUps[MAX_POWERUPS];
 Texture2D charactersTex;
 Texture2D neruPhoneTex;
+Texture2D stunEffectTex;
+Texture2D pauseBgTex;
+Texture2D scoreBgTex;
 
 int main(void)
 {
@@ -245,13 +257,19 @@ int main(void)
 
     InitWindow(screenWidth, screenHeight, "Raylib - Pong Breaker Royale");
     InitAudioDevice();
-    Sound bam = LoadSound("Pop.ogg");
+    Sound bam = LoadSound("Media/Pop.ogg");
+    Sound mikuSkillSound  = LoadSound("Media/mikuskillsound.wav");
+    Sound tetoSkillSound  = LoadSound("Media/tetoskillsound.wav");
+    Sound neruSkillSound  = LoadSound("Media/neruskillsound.wav");
 
-    Texture2D mikuLaserTex = LoadTexture("MikuLaser.png");
-    Texture2D paddleHairTex = LoadTexture("MkuPaddleHair.png");
-    Texture2D menuBgTex = LoadTexture("menubackground.jpg");
+    Texture2D mikuLaserTex = LoadTexture("Media/MikuLaser.png");
+    Texture2D paddleHairTex = LoadTexture("Media/MkuPaddleHair.png");
+    Texture2D menuBgTex = LoadTexture("Media/menubackground.jpg");
+    pauseBgTex = LoadTexture("Media/pausebackground.png");
+    scoreBgTex = LoadTexture("Media/scorebackground.png");
+    stunEffectTex = LoadTexture("Media/stuneffect.png");
     // Skills transparency fix: trim near-black pixels with threshold
-    Image drillImg = LoadImage("tetodrill.png");
+    Image drillImg = LoadImage("Media/tetodrill.png");
     ImageColorReplace(&drillImg, BLACK, BLANK);
     // Also clear very dark pixels (near-black threshold)
     Color *drillPixels = LoadImageColors(drillImg);
@@ -263,9 +281,9 @@ int main(void)
     Texture2D tetoDrillTex = LoadTextureFromImage(drillImg);
     UnloadImage(drillImg);
 
-    charactersTex = LoadTexture("characters.png");
+    charactersTex = LoadTexture("Media/characters.png");
 
-    Image phoneImg = LoadImage("neruphone.png");
+    Image phoneImg = LoadImage("Media/neruphone.png");
     ImageColorReplace(&phoneImg, BLACK, BLANK);
     // Also clear very dark pixels (near-black threshold)
     Color *phonePixels = LoadImageColors(phoneImg);
@@ -280,7 +298,12 @@ int main(void)
     neruCube.maxFrames = 4;
     neruCube.frameSpeed = 10.0f;
 
-    Music menuMusic = LoadMusicStream("triplebaksong.mp3");
+    Music menuMusic = LoadMusicStream("Media/triplebaksong.mp3");
+    Music mikuMusic = LoadMusicStream("Media/mikutheme.ogg");
+    Music tetoMusic = LoadMusicStream("Media/tetoris.wav");
+    Music neruMusic = LoadMusicStream("Media/nerutheme.ogg");
+    int currentLeadingChar = 0; // 0: Kimse, 1: Miku, 2: Teto, 3: Neru
+
     PlayMusicStream(menuMusic);
 
     LoadScores();
@@ -297,12 +320,35 @@ int main(void)
             ToggleFullscreen();
         }
 
-        UpdateMusicStream(menuMusic);
-        if (currentScreen == STATE_GAME) {
+        if (currentScreen == STATE_GAME || currentScreen == STATE_PAUSE) {
             PauseMusicStream(menuMusic);
+
+            if (!IsMusicStreamPlaying(mikuMusic)) PlayMusicStream(mikuMusic);
+            if (!IsMusicStreamPlaying(tetoMusic)) PlayMusicStream(tetoMusic);
+            if (!IsMusicStreamPlaying(neruMusic)) PlayMusicStream(neruMusic);
+
+            int winnerChar = currentLeadingChar;
+            if (score1 > score2) winnerChar = p1CharChoice;
+            else if (score2 > score1) winnerChar = p2CharChoice;
+            else if (currentLeadingChar == 0) winnerChar = p1CharChoice;
+            
+            currentLeadingChar = winnerChar;
+
+            SetMusicVolume(mikuMusic, currentLeadingChar == 1 ? 1.0f : 0.0f);
+            SetMusicVolume(tetoMusic, currentLeadingChar == 2 ? 1.0f : 0.0f);
+            SetMusicVolume(neruMusic, currentLeadingChar == 3 ? 1.0f : 0.0f);
+
+            UpdateMusicStream(mikuMusic);
+            UpdateMusicStream(tetoMusic);
+            UpdateMusicStream(neruMusic);
         }
         else {
+            UpdateMusicStream(menuMusic);
             ResumeMusicStream(menuMusic);
+            StopMusicStream(mikuMusic);
+            StopMusicStream(tetoMusic);
+            StopMusicStream(neruMusic);
+            currentLeadingChar = 0;
         }
 
         // Her karede ekran boyutunu güncelle
@@ -504,7 +550,6 @@ int main(void)
             float spacing = screenWidth * 0.20f;
             float startX = screenWidth * 0.5f - spacing;
 
-            Color charColors[3] = { SKYBLUE, RED, YELLOW };
             const char* charNames[3] = { "Miku", "Teto", "Neru" };
             int* currentSel = isP1Selecting ? &p1CharChoice : &p2CharChoice;
 
@@ -680,6 +725,17 @@ int main(void)
                 }
             }
         }
+
+        for (int i = 0; i < 2; i++) movers[i].active = false;
+        if (selectedMap == 3) {
+            movers[0] = (MovingObstacle){ { 0, screenHeight * 0.35f, 100 * scaleX, 15 * scaleY }, 250.0f * scaleX, 0, (float)screenWidth, true };
+            movers[1] = (MovingObstacle){ { screenWidth - 100 * scaleX, screenHeight * 0.65f, 100 * scaleX, 15 * scaleY }, -250.0f * scaleX, 0, (float)screenWidth, true };
+        }
+        else if (selectedMap == 4) {
+            movers[0] = (MovingObstacle){ { 0, screenHeight * 0.28f, 110 * scaleX, 18 * scaleY }, 280.0f * scaleX, 0, (float)screenWidth, true };
+            movers[1] = (MovingObstacle){ { screenWidth - 110 * scaleX, screenHeight * 0.72f, 110 * scaleX, 18 * scaleY }, -280.0f * scaleX, 0, (float)screenWidth, true };
+        }
+
         currentScreen = STATE_GAME;
         break;
 
@@ -752,7 +808,11 @@ int main(void)
 
 
         case STATE_HIGHSCORE:
-            ClearBackground(BLUE);
+            DrawTexturePro(scoreBgTex,
+                (Rectangle) { 0, 0, scoreBgTex.width, scoreBgTex.height },
+                (Rectangle) { 0, 0, screenWidth, screenHeight },
+                (Vector2) { 0, 0 }, 0.0f, WHITE);
+            DrawRectangleRec((Rectangle){ screenWidth * 0.15f, screenHeight * 0.10f, screenWidth * 0.70f, screenHeight * 0.80f }, (Color){ 0, 0, 0, 180 });
             DrawLeaderboard();
             Color backBtnColor = GRAY;
             if (CheckCollisionPointRec(GetMousePosition(), backbutton)) {
@@ -811,6 +871,10 @@ int main(void)
             // Zamanlayıcıyı azalt (Pause değilse)
             gameTimer -= GetFrameTime();
 
+            if (IsKeyPressed(KEY_LEFT_CONTROL)) {
+                gameTimer = 0.0f;
+            }
+
             // Süre bitti mi kontrolü
             if (gameTimer <= 0) {
                 gameTimer = 0;
@@ -831,6 +895,15 @@ int main(void)
             int timeTextWidth = MeasureText(timeText, 30);
             DrawText(timeText, screenWidth / 2 - timeTextWidth / 2, 20, 30, (gameTimer < 10 ? RED : RAYWHITE));
 
+            for (int i = 0; i < 2; i++) {
+                if (movers[i].active) {
+                    movers[i].rect.x += movers[i].speed * GetFrameTime();
+                    if (movers[i].rect.x <= movers[i].leftLimit || movers[i].rect.x + movers[i].rect.width >= movers[i].rightLimit) {
+                        movers[i].speed *= -1;
+                    }
+                }
+            }
+
             // --- Skill Tetikleme Yardımcı Makrosu ---
            // --- Player 1 Skill (KEY_DOWN) ---
             if (IsKeyPressed(KEY_DOWN) && char1.isSkillReady) {
@@ -841,6 +914,7 @@ int main(void)
                 char1.skillTickTimer = 0.5f;
 
                 if (char1.skill == SKILL_ROCKET) {
+                    PlaySound(tetoSkillSound);
                     drill.active = true;
                     drill.owner = 1;
                     drill.active = true;
@@ -850,6 +924,7 @@ int main(void)
                     drill.color = char1.themeColor;
                 }
                 else if (char1.skill == SKILL_STUN) {
+                    PlaySound(neruSkillSound);
                     neruCube.active = true;
                     neruCube.size = 40.0f * scaleX;
                     neruCube.rect = (Rectangle){ player1.rect.x + player1.rect.width / 2.0f - neruCube.size / 2.0f, player1.rect.y - neruCube.size, neruCube.size, neruCube.size };
@@ -857,7 +932,7 @@ int main(void)
                     neruCube.color = char1.themeColor;
                 }
                 else if (char1.skill == SKILL_LASER) {
-                    PlaySound(bam);
+                    PlaySound(mikuSkillSound);
                 }
             }
 
@@ -873,6 +948,7 @@ int main(void)
                 char2.skillTickTimer = 0.5f;
 
                 if (char2.skill == SKILL_ROCKET) {
+                    PlaySound(tetoSkillSound);
                     drill.active = true;
                     drill.owner = 2;
                     drill.size = 60.0f * scaleX;
@@ -881,6 +957,7 @@ int main(void)
                     drill.color = char2.themeColor;
                 }
                 else if (char2.skill == SKILL_STUN) {
+                    PlaySound(neruSkillSound);
                     neruCube.active = true;
                     neruCube.size = 40.0f * scaleX;
                     neruCube.rect = (Rectangle){ player2.rect.x + player2.rect.width / 2.0f - neruCube.size / 2.0f, player2.rect.y + player2.rect.height, neruCube.size, neruCube.size };
@@ -888,7 +965,7 @@ int main(void)
                     neruCube.color = char2.themeColor;
                 }
                 else if (char2.skill == SKILL_LASER) {
-                    PlaySound(bam);
+                    PlaySound(mikuSkillSound);
                 }
             }
 
@@ -931,7 +1008,6 @@ int main(void)
                     if (closestBallIdx != -1) {
                         float targetX = balls[closestBallIdx].position.x;
                         int k = rand() % 10 + 1, r = rand() % 10 + 1;
-                        int c = screenWidth / 4;
                         float velocity;
 
                         if (fixbot > 0 || (player2.rect.x + player2.rect.width / 2.0f < targetX && k != 10 && (fixbot > -1 ))) {
@@ -971,6 +1047,29 @@ int main(void)
                 DrawTexturePro(paddleHairTex, (Rectangle){0, 0, hairSrcW, hairSrcH}, leftHairRect, (Vector2){0, 0}, 0.0f, WHITE);
             }
             DrawRectangleRec(player1.rect, player1.color);
+            if (player1.stunTimer > 0) {
+                int stunCols = 4;
+                int stunRows = 4;
+                int stunTotalFrames = 16;
+                float stunFrameSpeed = 15.0f;
+                static float p1StunFrameTimer = 0.0f;
+                static int p1StunCurrentFrame = 0;
+                p1StunFrameTimer += GetFrameTime();
+                if (p1StunFrameTimer >= (1.0f / stunFrameSpeed)) {
+                    p1StunFrameTimer = 0.0f;
+                    p1StunCurrentFrame++;
+                    if (p1StunCurrentFrame >= stunTotalFrames) p1StunCurrentFrame = 0;
+                }
+                int frameX = p1StunCurrentFrame % stunCols;
+                int frameY = p1StunCurrentFrame / stunCols;
+                float frameW = (float)stunEffectTex.width / stunCols;
+                float frameH = (float)stunEffectTex.height / stunRows;
+                Rectangle src = { frameX * frameW, frameY * frameH, frameW, frameH };
+                float effW = player1.rect.width * 0.8f;
+                float effH = player1.rect.height * 2.0f;
+                Rectangle dst = { player1.rect.x + (player1.rect.width - effW) / 2.0f, player1.rect.y + (player1.rect.height - effH) / 2.0f, effW, effH };
+                DrawTexturePro(stunEffectTex, src, dst, (Vector2){0,0}, 0.0f, WHITE);
+            }
             if (p1CharChoice == 1) {
                 float hairSrcW = paddleHairTex.width / 2.0f;
                 float hairSrcH = paddleHairTex.height;
@@ -989,6 +1088,29 @@ int main(void)
                 DrawTexturePro(paddleHairTex, (Rectangle){0, 0, hairSrcW, hairSrcH}, leftHairRect, (Vector2){0, 0}, 0.0f, WHITE);
             }
             DrawRectangleRec(player2.rect, player2.color);
+            if (player2.stunTimer > 0) {
+                int stunCols = 4;
+                int stunRows = 4;
+                int stunTotalFrames = 16;
+                float stunFrameSpeed = 15.0f;
+                static float p2StunFrameTimer = 0.0f;
+                static int p2StunCurrentFrame = 0;
+                p2StunFrameTimer += GetFrameTime();
+                if (p2StunFrameTimer >= (1.0f / stunFrameSpeed)) {
+                    p2StunFrameTimer = 0.0f;
+                    p2StunCurrentFrame++;
+                    if (p2StunCurrentFrame >= stunTotalFrames) p2StunCurrentFrame = 0;
+                }
+                int frameX = p2StunCurrentFrame % stunCols;
+                int frameY = p2StunCurrentFrame / stunCols;
+                float frameW = (float)stunEffectTex.width / stunCols;
+                float frameH = (float)stunEffectTex.height / stunRows;
+                Rectangle src = { frameX * frameW, frameY * frameH, frameW, frameH };
+                float effW = player2.rect.width * 0.8f;
+                float effH = player2.rect.height * 2.0f;
+                Rectangle dst = { player2.rect.x + (player2.rect.width - effW) / 2.0f, player2.rect.y + (player2.rect.height - effH) / 2.0f, effW, effH };
+                DrawTexturePro(stunEffectTex, src, dst, (Vector2){0,0}, 0.0f, WHITE);
+            }
             if (p2CharChoice == 1) {
                 float hairSrcW = paddleHairTex.width / 2.0f;
                 float hairSrcH = paddleHairTex.height;
@@ -1009,6 +1131,14 @@ int main(void)
                                 bricks[i][j].rect.y + bricks[i][j].rect.height, GRAY);
                         }
                     }
+                }
+            }
+
+            for (int i = 0; i < 2; i++) {
+                if (movers[i].active) {
+                    DrawRectangleRec(movers[i].rect, GRAY);
+                    DrawRectangleLinesEx(movers[i].rect, 2, DARKGRAY);
+                    DrawLine(movers[i].rect.x, movers[i].rect.y, movers[i].rect.x + movers[i].rect.width, movers[i].rect.y + movers[i].rect.height, LIGHTGRAY);
                 }
             }
 
@@ -1279,6 +1409,15 @@ int main(void)
                         balls[i].active = false; // Kenardan geçince yok olsun
                     }
 
+                    for (int m = 0; m < 2; m++) {
+                        if (movers[m].active && CheckCollisionCircleRec(balls[i].position, balls[i].radius, movers[m].rect)) {
+                            balls[i].speed.y *= -1;
+                            PlaySound(bam);
+                            if (balls[i].speed.y > 0) balls[i].position.y = movers[m].rect.y + movers[m].rect.height + balls[i].radius;
+                            else balls[i].position.y = movers[m].rect.y - balls[i].radius;
+                        }
+                    }
+
                     // Paddle collisions & Ownership change
                     if (CheckCollisionCircleRec(balls[i].position, balls[i].radius, player1.rect)) {
                         PlaySound(bam);
@@ -1476,6 +1615,59 @@ int main(void)
                 }
             }
 
+            // --- HARİTA YENİLEME MANTIĞI ---
+            bool allBricksBroken = true;
+            for (int i = 0; i < BRICK_ROWS; i++) {
+                for (int j = 0; j < BRICK_COLS; j++) {
+                    // Sadece normal tuğlaları kontrol et
+                    if (bricks[i][j].active && bricks[i][j].type != BRICK_OBSTACLE) {
+                        allBricksBroken = false;
+                        break;
+                    }
+                }
+                if (!allBricksBroken) break;
+            }
+
+            if (allBricksBroken) {
+                // Topları Sıfırla
+                for (int i = 0; i < MAX_BALLS; i++) balls[i].active = false;
+
+                // Player 1 başlangıç topu
+                balls[0].active = true;
+                balls[0].owner = 1;
+                balls[0].isMoving = false;
+                balls[0].color = char1.themeColor;
+                balls[0].arrowAngle = 90.0f;
+                balls[0].arrowRotationDir = 1.0f;
+
+                // Player 2 başlangıç topu
+                balls[1].active = true;
+                balls[1].owner = 2;
+                balls[1].isMoving = false;
+                balls[1].color = char2.themeColor;
+                balls[1].arrowAngle = 270.0f;
+                balls[1].arrowRotationDir = 1.0f;
+
+                // Haritayı Yeniden Yükle
+                for (int i = 0; i < BRICK_ROWS; i++) {
+                    for (int j = 0; j < BRICK_COLS; j++) {
+                        int val = mapData[selectedMap][i][j];
+                        if (val != 0) {
+                            bricks[i][j].active = true;
+                            if (val == 1) { bricks[i][j].type = BRICK_NORMAL;   bricks[i][j].color = WHITE; }
+                            else if (val == 2) { bricks[i][j].type = BRICK_GREEN;    bricks[i][j].color = GREEN; }
+                            else if (val == 3) { bricks[i][j].type = BRICK_PURPLE;   bricks[i][j].color = PURPLE; }
+                            else if (val == 4) { bricks[i][j].type = BRICK_OBSTACLE; bricks[i][j].color = DARKGRAY; }
+                        }
+                    }
+                }
+
+                drill.active = false;
+                neruCube.active = false;
+                char1.isSkillActive = false;
+                char2.isSkillActive = false;
+            }
+
             pauseButton = (Rectangle){ screenWidth - 50 * scaleX, 10 * scaleY, 40 * scaleX, 40 * scaleY };
 
             // Butonu Çiz
@@ -1496,7 +1688,12 @@ int main(void)
             Vector2 mousePos = GetMousePosition();
 
             // Arka planı karart
-            DrawRectangle(0, 0, currentW, currentH, (Color) { 0, 0, 0, 180 });
+            DrawTexturePro(pauseBgTex,
+                (Rectangle) { 0, 0, pauseBgTex.width, pauseBgTex.height },
+                (Rectangle) { 0, 0, currentW, currentH },
+                (Vector2) { 0, 0 }, 0.0f, WHITE);
+            Rectangle pauseBgBox = { currentW * 0.25f, currentH * 0.25f, currentW * 0.50f, currentH * 0.50f };
+            DrawRectangleRec(pauseBgBox, (Color) { 0, 0, 0, 180 });
 
             // Başlık
             int pauseFontSize = (int)(30 * scaleY);
@@ -1621,12 +1818,14 @@ void LoadScores() {
     FILE* file = fopen("scores.txt", "rb");
     if (file == NULL) {
         for (int i = 0; i < MAX_SCORES; i++) {
-            strcpy_s(topScores[i].name, sizeof(topScores[i].name), "Empty Slot");
+            snprintf(topScores[i].name, sizeof(topScores[i].name), "Empty Slot");
             topScores[i].score = 0;
         }
     }
     else {
-        fread(topScores, sizeof(ScoreEntry), MAX_SCORES, file);
+        if (fread(topScores, sizeof(ScoreEntry), MAX_SCORES, file) != MAX_SCORES) {
+            // Incomplete read handled silently
+        }
         fclose(file);
     }
 }
@@ -1639,7 +1838,7 @@ void SaveScore(const char* name, int newScore) {
             for (int j = MAX_SCORES - 1; j > i; j--) {
                 topScores[j] = topScores[j - 1];
             }
-            strcpy_s(topScores[i].name,sizeof(topScores[i].name), name);
+            snprintf(topScores[i].name, sizeof(topScores[i].name), "%s", name);
             topScores[i].score = newScore;
             break;
         }
