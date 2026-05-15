@@ -241,6 +241,7 @@ int main(void)
         }
     }
     Rectangle backbutton = { 10, 10, 80, 30 };
+    int fixbot = 0; //bot hareketi düzelmek için 
 
     InitWindow(screenWidth, screenHeight, "Raylib - Pong Breaker Royale");
     InitAudioDevice();
@@ -931,19 +932,23 @@ int main(void)
                         float targetX = balls[closestBallIdx].position.x;
                         int k = rand() % 10 + 1, r = rand() % 10 + 1;
                         int c = screenWidth / 4;
-                        double velocity;
+                        float velocity;
 
-                        if (player2.rect.x + player2.rect.width / 2.0f < targetX && k != 10) {
-                            velocity = (r != 1) ? 1.0 : 0.4;
+                        if (fixbot > 0 || (player2.rect.x + player2.rect.width / 2.0f < targetX && k != 10 && (fixbot > -1 ))) {
+                            velocity = (r != 1) ? 1.0f : 0.4f;
                             player2.rect.x += player2.speed * GetFrameTime() * velocity;
+                            fixbot++;
                         }
-                        else if (player2.rect.x + player2.rect.width / 2.0f > targetX && k != 10) {
-                            velocity = (r != 1) ? 1.0 : 0.4;
+                        else if (fixbot < 0 || (player2.rect.x + player2.rect.width / 2.0f > targetX && k != 10)) {
+                            velocity = (r != 1) ? 1.0f : 0.4f;
                             player2.rect.x -= player2.speed * GetFrameTime() * velocity;
+                            fixbot--;
                         }
+                        if (player2.rect.x < 0) { player2.rect.x = 0; fixbot = 1; }
+                        if (player2.rect.x > screenWidth - player2.rect.width) { player2.rect.x = screenWidth - player2.rect.width; fixbot = 0; }
+                        if (fixbot >= 60 || fixbot <= -60) fixbot = 0; // Bot'un takılmasını önlemek için sıfırlama
                     }
-                    if (player2.rect.x < 0) player2.rect.x = 0;
-                    if (player2.rect.x > screenWidth - player2.rect.width) player2.rect.x = screenWidth - player2.rect.width;
+					
                 }
                 else {
                     if (IsKeyDown(KEY_D) && player2.rect.x < screenWidth - player2.rect.width) {
@@ -1616,7 +1621,7 @@ void LoadScores() {
     FILE* file = fopen("scores.txt", "rb");
     if (file == NULL) {
         for (int i = 0; i < MAX_SCORES; i++) {
-            strcpy(topScores[i].name, "Empty Slot");
+            strcpy_s(topScores[i].name, sizeof(topScores[i].name), "Empty Slot");
             topScores[i].score = 0;
         }
     }
@@ -1634,7 +1639,7 @@ void SaveScore(const char* name, int newScore) {
             for (int j = MAX_SCORES - 1; j > i; j--) {
                 topScores[j] = topScores[j - 1];
             }
-            strcpy(topScores[i].name, name);
+            strcpy_s(topScores[i].name,sizeof(topScores[i].name), name);
             topScores[i].score = newScore;
             break;
         }
