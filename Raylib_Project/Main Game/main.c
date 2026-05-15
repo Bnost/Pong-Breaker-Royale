@@ -255,7 +255,7 @@ int main(void)
     Rectangle backbutton = { 10, 10, 80, 30 };
     int fixbot = 0; //bot hareketi düzelmek için 
 
-    InitWindow(screenWidth, screenHeight, "Raylib - Pong Breaker Royale");
+    InitWindow(screenWidth, screenHeight, "Raylib - Vocaloid Breaker Royale");
     InitAudioDevice();
     Sound bam = LoadSound("Media/Pop.ogg");
     Sound mikuSkillSound  = LoadSound("Media/mikuskillsound.wav");
@@ -437,7 +437,9 @@ int main(void)
             Rectangle bgBox = { screenWidth * 0.15f, screenHeight * 0.35f, screenWidth * 0.70f, screenHeight * 0.55f };
             DrawRectangleRec(bgBox, (Color) { 0, 0, 0, 180 });
 
-            DrawText("PLAY PONG BREAKER ROYALE", screenWidth * 0.33f, screenHeight * 0.44f, screenHeight * 0.044f, RAYWHITE);
+            const char* titleText = "PLAY VOCALOID BREAKER ROYALE";
+            int titleFontSize = (int)(screenHeight * 0.044f);
+            DrawText(titleText, screenWidth / 2 - MeasureText(titleText, titleFontSize) / 2, (int)(screenHeight * 0.44f), titleFontSize, RAYWHITE);
 
             Rectangle playRect = { screenWidth / 2 - screenWidth * 0.062f, screenHeight * 0.56f, screenWidth * 0.15f, screenHeight * 0.055f };
             Rectangle scoreRect = { screenWidth / 2 - screenWidth * 0.062f, screenHeight * 0.67f, screenWidth * 0.15f, screenHeight * 0.055f };
@@ -612,8 +614,14 @@ int main(void)
                     }
                 }
             }
-            if (IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_S)) {
-                charConfirmed = true;
+            if (isP1Selecting) {
+                if (IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_DOWN)) {
+                    charConfirmed = true;
+                }
+            } else {
+                if (IsKeyPressed(KEY_SPACE) || IsKeyPressed(KEY_S)) {
+                    charConfirmed = true;
+                }
             }
 
             if (charConfirmed) {
@@ -849,16 +857,19 @@ int main(void)
                 currentScreen = STATE_GAMEOVER;   // Sonra sonuç ekranına geçiyoruz
             }
 
-            // Çizim kısmı (Basitçe)
-            BeginDrawing();
+            // Çizim kısmı (Tam ekran merkezli)
             ClearBackground(BLACK);
-            DrawText("NEW HIGH SCORE!", 250, 100, 30, GOLD);
-            DrawText(TextFormat("Score: %d", winnerScore), 320, 150, 20, WHITE);
-            DrawText("Type Your Name:", 280, 200, 20, GRAY);
-            DrawRectangle(250, 240, 300, 40, RAYWHITE);
-            DrawText(nameInput, 260, 245, 30, MAROON);
-            DrawText("Press ENTER to save", 290, 300, 15, DARKGRAY);
-            EndDrawing();
+            int cx = screenWidth / 2;
+            int cy = screenHeight / 2;
+            
+            DrawText("NEW HIGH SCORE!", cx - MeasureText("NEW HIGH SCORE!", 40) / 2, cy - 150, 40, GOLD);
+            DrawText(TextFormat("Score: %d", winnerScore), cx - MeasureText(TextFormat("Score: %d", winnerScore), 30) / 2, cy - 90, 30, WHITE);
+            DrawText("Type Your Name:", cx - MeasureText("Type Your Name:", 20) / 2, cy - 40, 20, GRAY);
+            
+            DrawRectangle(cx - 150, cy, 300, 50, RAYWHITE);
+            DrawText(nameInput, cx - 140, cy + 10, 30, MAROON);
+            
+            DrawText("Press ENTER to save", cx - MeasureText("Press ENTER to save", 20) / 2, cy + 80, 20, DARKGRAY);
         }
         break;
 
@@ -885,7 +896,11 @@ int main(void)
                 nameInput[0] = '\0';
                 letterCount = 0;
 
-                currentScreen = STATE_INPUT_NAME; // Önce isim sorma ekranına git
+                if (winnerScore > topScores[MAX_SCORES - 1].score && winnerScore > 0) {
+                    currentScreen = STATE_INPUT_NAME; // Önce isim sorma ekranına git
+                } else {
+                    currentScreen = STATE_GAMEOVER;   // Skoru yetmiyorsa oyun bitiş ekranı
+                }
             }
 
             // --- SAYAÇ ÇİZİMİ ---
@@ -1861,8 +1876,8 @@ void DrawLeaderboard() {
     int startY    = (int)(sh * 0.28f);
     int rowSpacing = (int)(sh * 0.10f);
 
-    DrawText("EN YUKSEK SKORLAR",
-        sw / 2 - MeasureText("EN YUKSEK SKORLAR", titleSize) / 2,
+    DrawText("HIGH SCORES",
+        sw / 2 - MeasureText("HIGH SCORES", titleSize) / 2,
         titleY, titleSize, GOLD);
 
     for (int i = 0; i < MAX_SCORES; i++) {
