@@ -15,16 +15,16 @@
 
 // Harita Düzenleri
 const int mapData[5][BRICK_ROWS][BRICK_COLS] = {
-    // Harita 1: "Çapraz Çarpışma" (X Şekli)
+    // Harita 1: "Satranç Tahtası" (Parçalı ve kaotik)
     {
-        {3, 0, 0, 0, 4, 0, 0, 1, 0, 0, 4, 0, 0, 0, 3},
-        {0, 2, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 2, 0},
-        {0, 0, 2, 0, 0, 1, 0, 4, 0, 1, 0, 0, 2, 0, 0},
-        {0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0},
-        {0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0},
-        {0, 0, 2, 0, 0, 1, 0, 4, 0, 1, 0, 0, 2, 0, 0},
-        {0, 2, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 2, 0},
-        {3, 0, 0, 0, 4, 0, 0, 1, 0, 0, 4, 0, 0, 0, 3}
+        {1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 3},
+        {0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 3, 0},
+        {3, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1},
+        {0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0},
+        {0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0},
+        {3, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1},
+        {0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 3, 0},
+        {1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 3}
     },
     // Harita 2: "Kale Duvarları" (Korunaklı yapı)
     {
@@ -37,16 +37,16 @@ const int mapData[5][BRICK_ROWS][BRICK_COLS] = {
         {2, 0, 0, 0, 2, 0, 0, 3, 0, 0, 2, 0, 0, 0, 2},
         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
     },
-    // Harita 3: "Satranç Tahtası" (Parçalı ve kaotik)
+    // Harita 3: "Çapraz Çarpışma" (X Şekli)
     {
-        {1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 3},
-        {0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 3, 0},
-        {3, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1},
-        {0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0},
-        {0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0},
-        {3, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1},
-        {0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 3, 0},
-        {1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 3}
+        {3, 0, 0, 0, 4, 0, 0, 1, 0, 0, 4, 0, 0, 0, 3},
+        {0, 2, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 2, 0},
+        {0, 0, 2, 0, 0, 1, 0, 4, 0, 1, 0, 0, 2, 0, 0},
+        {0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0},
+        {0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0},
+        {0, 0, 2, 0, 0, 1, 0, 4, 0, 1, 0, 0, 2, 0, 0},
+        {0, 2, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 2, 0},
+        {3, 0, 0, 0, 4, 0, 0, 1, 0, 0, 4, 0, 0, 0, 3}
     },
     // Harita 4: "Elmas Madeni" (Merkez odaklı)
     {
@@ -782,7 +782,7 @@ int main(void)
             float spacingX = screenWidth * 0.25f;
             float spacingY = screenHeight * 0.20f;
 
-            const char* mapNames[5] = { "Cross Clash", "Castle Walls", "Chessboard", "Diamond Mine", "Pillars" };
+            const char* mapNames[5] = { "Chessboard", "Castle Walls", "Cross Clash", "Diamond Mine", "Pillars" };
             Vector2 mouse = GetMousePosition();
 
             for (int i = 0; i < 5; i++) {
@@ -1165,20 +1165,26 @@ int main(void)
                 }
             }
 
-            // Skill Bars
-            float barWidth = 20 * scaleX;
-            float barHeight = 200 * scaleY;
-            float barY = screenHeight / 2.0f - barHeight / 2.0f;
+            // Skill Bars (Berke düzeni: Player2 sol üst, Player1 sağ alt, yatay)
+            float skillBarWidth = 140 * scaleX;
+            float skillBarHeight = 12 * scaleY;
+            float skillBarY = 55 * scaleY;
 
-            // Player 2 Bar (Left)
-            float p2Fill = (char2.cooldownMax - char2.currentCooldown) / char2.cooldownMax;
-            DrawRectangleLines(10 * scaleX, barY, barWidth, barHeight, LIGHTGRAY);
-            DrawRectangle(10 * scaleX, barY + barHeight * (1.0f - p2Fill), barWidth, barHeight * p2Fill, char2.themeColor);
+            // Player 2 Skill Bar (Sol Üst)
+            float p2Fill = (char2.currentCooldown == 0) ? 1.0f : (char2.cooldownMax - char2.currentCooldown) / char2.cooldownMax;
+            if (p2Fill < 0) p2Fill = 0;
+            DrawRectangleLines(40 * scaleX, skillBarY, skillBarWidth, skillBarHeight, LIGHTGRAY);
+            DrawRectangle(40 * scaleX, skillBarY, skillBarWidth * p2Fill, skillBarHeight, char2.themeColor);
+            DrawText("SKILL", 40 * scaleX, skillBarY + skillBarHeight + 4, 10 * scaleY, LIGHTGRAY);
 
-            // Player 1 Bar (Right)
-            float p1Fill = (char1.cooldownMax - char1.currentCooldown) / char1.cooldownMax;
-            DrawRectangleLines(screenWidth - 10 * scaleX - barWidth, barY, barWidth, barHeight, LIGHTGRAY);
-            DrawRectangle(screenWidth - 10 * scaleX - barWidth, barY + barHeight * (1.0f - p1Fill), barWidth, barHeight * p1Fill, char1.themeColor);
+            // Player 1 Skill Bar (Sağ Alt)
+            float p1Fill = (char1.currentCooldown == 0) ? 1.0f : (char1.cooldownMax - char1.currentCooldown) / char1.cooldownMax;
+            if (p1Fill < 0) p1Fill = 0;
+            float p1BarX = screenWidth - 40 * scaleX - skillBarWidth;
+            float p1BarY = screenHeight - 65 * scaleY;
+            DrawRectangleLines(p1BarX, p1BarY, skillBarWidth, skillBarHeight, LIGHTGRAY);
+            DrawRectangle(p1BarX, p1BarY, skillBarWidth * p1Fill, skillBarHeight, char1.themeColor);
+            DrawText("SKILL", p1BarX + skillBarWidth - MeasureText("SKILL", 10 * scaleY), p1BarY - 12 * scaleY, 10 * scaleY, LIGHTGRAY);
 
             // Laser Logic - char1 (Player1, yukarı doğru)
             Rectangle laserRect = { 0 };
@@ -1270,11 +1276,31 @@ int main(void)
                                 PlaySound(bam);
                                 break;
                             }
+                            BrickType brokenType = bricks[i][j].type;
+                            Rectangle brokenRect = bricks[i][j].rect;
                             bricks[i][j].active = false;
                             hitBrick = true;
-                            int points = (bricks[i][j].type == BRICK_GREEN) ? 20 : 10;
+                            // Drill ile kırılan tuğlalar 2 kat puan verir
+                            int points = (brokenType == BRICK_GREEN) ? 40 : 20;
                             if (drill.owner == 1) score1 += points;
                             else score2 += points;
+
+                            // Mor tuğlalar skill küresi düşürür
+                            if (brokenType == BRICK_PURPLE) {
+                                for (int p = 0; p < MAX_POWERUPS; p++) {
+                                    if (!powerUps[p].active) {
+                                        powerUps[p].active = true;
+                                        powerUps[p].position = (Vector2){ brokenRect.x + brokenRect.width / 2.0f, brokenRect.y };
+                                        powerUps[p].targetPlayer = drill.owner;
+                                        powerUps[p].speed = (drill.owner == 1) ? 200.0f * scaleY : -200.0f * scaleY;
+                                        int chance = rand() % 3;
+                                        if (chance == 0) powerUps[p].type = PW_COOLDOWN;
+                                        else if (chance == 1) powerUps[p].type = PW_POINTS;
+                                        else powerUps[p].type = PW_EXTRA_BALL;
+                                        break;
+                                    }
+                                }
+                            }
                         }
                     }
                 }
